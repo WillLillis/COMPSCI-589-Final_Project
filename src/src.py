@@ -12,21 +12,28 @@ import os
 def test_digits():
     pass
 def test_loans():
-    pass
-def test_parkinsons():
-    pass
-def test_titanic():
-    pass
-
-
-def main():
-    k_folds, attr_type, attr_labels = misc.k_folds_gen(10, os.path.join("The_Titanic_Dataset", "titanic.csv"))
+    k_folds, attr_type, attr_labels = misc.k_folds_gen(10, os.path.join("The_Loan_Eligibility_Prediction_Dataset", "loan.csv"), True)
 
     print(f"attr_type: {attr_type}")
     print(f"attr_labels: {attr_labels}")
     for k in range(len(k_folds)):
         print(f"Fold {k}:")
         print(k_folds[k])
+def test_parkinsons():
+    pass
+def test_titanic():
+    k_folds, attr_type, attr_labels = misc.k_folds_gen(10, os.path.join("The_Titanic_Dataset", "titanic.csv"), True)
+
+    print(f"attr_type: {attr_type}")
+    print(f"attr_labels: {attr_labels}")
+    for k in range(len(k_folds)):
+        print(f"Fold {k}:")
+        print(k_folds[k])
+
+
+def main():
+    #test_loans()
+    test_titanic()
 
 if __name__ == "__main__":
     main()

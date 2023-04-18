@@ -21,7 +21,7 @@ def bootstrap(data: list):
     return strap
 
 # generates the 
-def k_folds_gen(k: int, file_name: str):
+def k_folds_gen(k: int, file_name: str, normalize_attrs: bool):
     # find class proportiions in data set
     # make k folds
     # populate each fold according to class proportions (randomly)
@@ -69,7 +69,55 @@ def k_folds_gen(k: int, file_name: str):
             for _ in range(len(data_set[0]) - 1):
                 attr_type.append(True)
         elif 'loan.csv' in file_name:
-            pass
+            data_reader = csv.reader(raw_data_file)
+            data_set = list(data_reader)
+            # throw out the load id attribute
+            for i in range(len(data_set)):
+                data_set[i].pop(0)
+            # cast attribute values to appropriate data types from strings
+            for i in range(1, len(data_set)):
+                for j in range(len(data_set[0])):
+                    if j == 0: # Gender: from 'Male'/'Female' to 0/1
+                        data_set[i][j] = 0 if data_set[i][j] == 'Male' else 1
+                    elif j == 1: # Married: from 'No'/'Yes' to 0/1
+                        data_set[i][j] = 0 if data_set[i][j] == 'No' else 1
+                    elif j == 2: # Dependents: from '0','1','2','3+' to 0,1,2,3
+                        data_set[i][j] = 3 if data_set[i][j] == '3+' else (int(data_set[i][j]))
+                    elif j == 3: # Education: from 'Not Graduate'/'Graduate' to 0/1
+                        data_set[i][j] = 0 if data_set[i][j] == 'Not Graduate' else 1
+                    elif j == 4: # Self_Employed: from 'No'/'Yes' to 0/1
+                        data_set[i][j] = 0 if data_set[i][j] == 'No' else 1
+                    elif j == 5 or j == 6 or j == 7 or j == 8 or j == 9: # ApplicantIncome or CoapplicantIncome or Loan_Amount or Loan_Amount_Term or Credit_History
+                        data_set[i][j] = int(float(data_set[i][j]))
+                    elif j == 10: # Property_Area: from 'Rural'/'Semiurban'/'Urban' to 0/1/2
+                        if data_set[i][j] == 'Rural':
+                            data_set[i][j] = 0
+                        elif data_set[i][j] == 'Semiurban':
+                            data_set[i][j] = 1
+                        elif data_set[i][j] == 'Urban':
+                            data_set[i][j] = 2
+                    elif j == 11:
+                        data_set[i][j] = 0 if data_set[i][j] == 'N' else 1
+            attr_type.append(False) # Gender
+            attr_type.append(False) # Married
+            attr_type.append(False) # Dependents
+            attr_type.append(False) # Education
+            attr_type.append(False) # Self_Employed
+            attr_type.append(True)  # ApplicantIncome
+            attr_type.append(True)  # Coapplicant Income
+            attr_type.append(True)  # LoanAmount
+            attr_type.append(True)  # Loan_Amount_Term
+            attr_type.append(False) # Credit_History
+            attr_type.append(False) # Property_Area
+            # Normalize features if specified (ASSUMES STRICTLY NON-NEGATIVE VALUES)
+            if normalize_attrs:
+                for i in range(len(attr_type)):
+                    if attr_type[i]: # if it's a numerical attribute
+                        tmp_max = 0
+                        for j in range(1, len(data_set)): # Find the max value for the given numerical attribute
+                            tmp_max = max(tmp_max, data_set[j][i])
+                        for j in range(1, len(data_set)): # Scale all the values according to this max value
+                            data_set[j][i] /= tmp_max
         elif 'parkinsons.csv' in file_name:
             pass
         elif 'titanic.csv' in file_name:
@@ -91,12 +139,20 @@ def k_folds_gen(k: int, file_name: str):
                         data_set[i][j] = float(data_set[i][j])
                     else: # rest ints
                         data_set[i][j] = int(data_set[i][j])
-            attr_type.append(False) 
-            attr_type.append(False)
-            attr_type.append(True)
-            attr_type.append(False)
-            attr_type.append(False)
-            attr_type.append(True)
+            attr_type.append(False) # Pclass
+            attr_type.append(False) # Sex
+            attr_type.append(True)  # Age
+            attr_type.append(False) # Siblings/Spouses Aboard
+            attr_type.append(False) # Parents/Children Aboard
+            attr_type.append(True)  # Fare
+            if normalize_attrs:
+                for i in range(len(attr_type)):
+                    if attr_type[i]: # if it's a numerical attribute
+                        tmp_max = 0
+                        for j in range(1, len(data_set)): # Find the max value for the given numerical attribute
+                            tmp_max = max(tmp_max, data_set[j][i])
+                        for j in range(1, len(data_set)): # Scale all the values according to this max value
+                            data_set[j][i] /= tmp_max
         # no idea what to do with the MNIST files, absolute mess
         else:
             print(f"Bad file name passed as parameter! ({file_name})")
@@ -109,8 +165,7 @@ def k_folds_gen(k: int, file_name: str):
         else:
             class_partitioned[data_set[i][-1]] = list()
             class_partitioned[data_set[i][-1]].append(data_set[i])
-
-    #print(class_partitioned)
+    
     class_proportions = {}
     for item in class_partitioned:
         class_proportions[item] = len(class_partitioned[item]) / (len(data_set) - 1)
