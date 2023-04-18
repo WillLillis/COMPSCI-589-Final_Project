@@ -20,7 +20,13 @@ def test_loans():
         print(f"Fold {k}:")
         print(k_folds[k])
 def test_parkinsons():
-    pass
+    k_folds, attr_type, attr_labels = misc.k_folds_gen(10, os.path.join("The_Oxford_Parkinson's_Disease_Detection_Dataset", "parkinsons.csv"), True)
+
+    print(f"attr_type: {attr_type}")
+    print(f"attr_labels: {attr_labels}")
+    for k in range(len(k_folds)):
+        print(f"Fold {k}:")
+        print(k_folds[k])
 def test_titanic():
     k_folds, attr_type, attr_labels = misc.k_folds_gen(10, os.path.join("The_Titanic_Dataset", "titanic.csv"), True)
 
@@ -33,7 +39,8 @@ def test_titanic():
 
 def main():
     #test_loans()
-    test_titanic()
+    #test_titanic()
+    test_parkinsons()
 
 if __name__ == "__main__":
     main()

@@ -33,7 +33,7 @@ def k_folds_gen(k: int, file_name: str, normalize_attrs: bool):
 
     # True for numeric, False for categorical
     attr_type = list()
-    with open(os.path.join(os.path.dirname(__file__), os.pardir, os.path.join('data',file_name))) as raw_data_file: 
+    with open(os.path.join(os.path.dirname(__file__), os.pardir, os.path.join('data',file_name)), encoding="utf-8") as raw_data_file: 
     #with open(file_name, encoding="utf-8") as raw_data_file:
         # the data files all follow different labeling conventions and/or use different delimiters...
         # could make this more general, but here we'll more or less hardcode in the correct procedure for
@@ -120,6 +120,25 @@ def k_folds_gen(k: int, file_name: str, normalize_attrs: bool):
                             data_set[j][i] /= tmp_max
         elif 'parkinsons.csv' in file_name:
             pass
+            # all attributes (except the class label) are floats
+            # negative values included, so we need to use the more generalized normalization formula
+            data_reader = csv.reader(raw_data_file)
+            data_set = list(data_reader)
+            for i in range(1, len(data_set)):
+                data_set[i][-1] = int(data_set[i][-1])
+                for j in range(len(data_set[0]) - 1):
+                    data_set[i][j] = float(data_set[i][j])
+            for i in range(len(data_set[0]) - 1):
+                attr_type.append(True)
+            if normalize_attrs:
+                for i in range(len(attr_type)):
+                    tmp_max = float('-inf')
+                    tmp_min = float('inf')
+                    for j in range(1, len(data_set)): # Find the max value for the given numerical attribute
+                        tmp_max = max(tmp_max, data_set[j][i])
+                        tmp_min = min(tmp_min, data_set[j][i])
+                    for j in range(1, len(data_set)):
+                        data_set[j][i] = (data_set[j][i] - tmp_min) / (tmp_max - tmp_min)
         elif 'titanic.csv' in file_name:
             data_reader = csv.reader(raw_data_file)
             data_set = list(data_reader)
