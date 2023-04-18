@@ -7,6 +7,8 @@
 from copy import deepcopy
 import csv
 import random
+import sys
+import os
 
 # returns a bootstrap of the data set passed in, with labels still in the first row
 def bootstrap(data: list):
@@ -31,8 +33,8 @@ def k_folds_gen(k: int, file_name: str):
 
     # True for numeric, False for categorical
     attr_type = list()
-
-    with open(file_name, encoding="utf-8") as raw_data_file:
+    with open(os.path.join(os.path.dirname(__file__), os.pardir, os.path.join('data',file_name))) as raw_data_file: 
+    #with open(file_name, encoding="utf-8") as raw_data_file:
         # the data files all follow different labeling conventions and/or use different delimiters...
         # could make this more general, but here we'll more or less hardcode in the correct procedure for
         # the cancer, house votes, and wine datasets
@@ -66,6 +68,39 @@ def k_folds_gen(k: int, file_name: str):
                 entry.append(tmp)
             for _ in range(len(data_set[0]) - 1):
                 attr_type.append(True)
+        elif 'loan.csv' in file_name:
+            pass
+        elif 'parkinsons.csv' in file_name:
+            pass
+        elif 'titanic.csv' in file_name:
+            data_reader = csv.reader(raw_data_file)
+            data_set = list(data_reader)
+            # throw out the passenger name attribute
+            for i in range(len(data_set)):
+                data_set[i].pop(2)
+            # put the class labels in the last column
+            for i in range(len(data_set)):
+                tmp = data_set[i].pop(0)
+                data_set[i].append(tmp)
+            # cast attribute values to appropriate data types from strings
+            for i in range(1, len(data_set)):
+                for j in range(len(data_set[0])):
+                    if j == 1: # translate 'male'/'female' to '0'/'1'
+                        data_set[i][j] = 0 if data_set[i][j] == 'male' else 1
+                    elif j == 2 or j == 5: # age and fare both floats
+                        data_set[i][j] = float(data_set[i][j])
+                    else: # rest ints
+                        data_set[i][j] = int(data_set[i][j])
+            attr_type.append(False) 
+            attr_type.append(False)
+            attr_type.append(True)
+            attr_type.append(False)
+            attr_type.append(False)
+            attr_type.append(True)
+        # no idea what to do with the MNIST files, absolute mess
+        else:
+            print(f"Bad file name passed as parameter! ({file_name})")
+            return None
 
     class_partitioned = {}
     for i in range(1, len(data_set)):
