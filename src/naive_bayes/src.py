@@ -2,6 +2,9 @@ from math import log2
 from utils import load_test_set, load_training_set
 import numpy
 from random import randrange
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 
 def main():
     g_laplace_smooth = True # global flag to indicate whether we're using Laplace Smoothing or not

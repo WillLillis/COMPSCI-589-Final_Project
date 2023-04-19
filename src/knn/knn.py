@@ -3,6 +3,9 @@ import csv
 from random import randrange
 from statistics import stdev
 import matplotlib.pyplot as plt
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 
 # read in the data from the csv, normalize it, randomly split into training and test sets, return these sets
 def prepare_data():

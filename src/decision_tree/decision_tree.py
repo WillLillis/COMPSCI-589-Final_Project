@@ -6,6 +6,9 @@ import random
 from statistics import stdev
 #import matplotlib.pyplot as plt
 from math import sqrt
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 
 class decision_tree:
     # data - The dataset passed in to create further nodes with

@@ -6,11 +6,16 @@
     # on the loaded data and evaluate it using the metrics of interest 
         # - k-fold stratified cross validation with k=10
         # - Accuracy and F1 score
+    # Might need to fight with python in adding the parent directory path so you can import things through the folders...
 import misc
 import os
 
 def test_digits():
     pass
+    # digits stored as rows of 64 numbers
+    # originally an 8x8 grayscale pixel array, which was flattened
+    # I guess values 0->15 indicate white->black for each pixel
+    # going to wait to write code to load this until we see how our NN turns out
 def test_loans():
     k_folds, attr_type, attr_labels = misc.k_folds_gen(10, os.path.join("The_Loan_Eligibility_Prediction_Dataset", "loan.csv"), True)
 
@@ -40,7 +45,8 @@ def test_titanic():
 def main():
     #test_loans()
     #test_titanic()
-    test_parkinsons()
+    #test_parkinsons()
+    test_digits()
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,11 @@
 from copy import deepcopy
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 import decision_tree
 import misc
+
+
 
 class random_forest:
     def __init__(self, data: list, num_trees: int, attr_type: list, attr_labels: list, stopping_criteria = "minimal_gain_criterion"):
@@ -50,3 +55,9 @@ class random_forest:
                 self.trees[i].recursive_print()
         else:
             self.trees[tree_index].recursive_print()
+
+#def main():
+#    print("Hey")
+
+#if __name__ == "__main__":
+#    main()
