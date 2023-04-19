@@ -10,6 +10,8 @@ import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 
+# TODO: Remove ignoring of first row because labels aren't there for subsequent recursive calls
+
 class decision_tree:
     # data - The dataset passed in to create further nodes with
     # depth - recursive depth in terms of '\t' characters, used for debugging purposes
@@ -62,13 +64,10 @@ class decision_tree:
                  if attr_type[i] == True: # if it's a numerical attribute...
                      partitions, _ = partition_data_numerical(data, attributes[i], attr_labels) # paritition 'data' according to the current attribute 'attr'
                  else: # otherwise it's categorical
-                     #BUGBUG need to pass in different value instead of attributes[i] or fix the function
                      partitions = partition_data_categorical(data, attributes[i], attr_vals, attr_labels) # paritition 'data' according to the current attribute 'attr'
-                 #BUGBUG info_gains getting assigned float values here!!!!
                  info_gains[attributes[i]] = info_gain(data_set_only_labels, partitions) 
              split_attr = max(info_gains, key = info_gains.get) # get the attribute of maximal gain
-             #print(f"LOOK HERE!!!Split attr: {split_attr}")
-             #print(f"info_gains: {info_gains}")
+             
              if info_gains[split_attr] < thresh:
                 self.is_leaf = True
                 self.node_attr = None
@@ -174,10 +173,11 @@ class decision_tree:
                             num_one += 1
                     majority = 0 if num_zero >= num_one else 1
                     break
-        # BUGBUG fix this for numerical attributes, probably need a completely separate section
+
         if attr_type[split_attr_index] == True: # if it's numerical...
             # create dictionary self.attr_val here 
             # could be smarter about this, but I'm just going to hard code it...
+            # dictionary doesn't get used at all, but feels better doing this than passing 'None'
             tmp_attr_val = {}
             tmp_attr_val["type"] = "numerical"
             tmp_attr_val["value"] = "leq" # less than or equal to partition
@@ -196,10 +196,10 @@ class decision_tree:
                     attr_vals, depth=depth + '\t', classification=majority, split_metric=split_metric))
         else: # otherwise it's categorical
             # Need to support dictionaries here...
-            tmp_attr_val = {}
-            tmp_attr_val["type"] = "categorical"
+            #tmp_attr_val = {}
+            #tmp_attr_val["type"] = "categorical"
             for i in range(len(child_data)):
-                tmp_attr_val["value"] = i
+                #tmp_attr_val["value"] = i
                 if len(child_data[i]) > 1:#if len(child_data[i]) != 0: 
                     self.children.append(decision_tree(child_data[i], i, stopping_criteria, attr_type, attr_labels,\
                         attr_vals, depth=depth + '\t', split_metric=split_metric))
@@ -218,75 +218,20 @@ class decision_tree:
     
     # classifies data 'instance' using the current tree
     def classify_instance(self, instance, attr_to_index, attr_type):
-        #print("CLASSIFY INSTANCE!")
-        #print(f"instance: {instance}")
-        #print(f"attr_to_index: {attr_to_index}")
-        #print(f"attr_type: {attr_type}")
         if self.is_leaf == True: # base case
-            #print(f"Base case: returning {self.classification}")
             return self.classification
-        #print(f"attr_to_index: {attr_to_index}")
-        #print(f"self.node_attr: {self.node_attr}")
-        #BUGBUG stringifying self.node_attr fixes the key error but may break other things
-        #if attr_type[attr_to_index[str(self.node_attr)]] == True: # if it's numerical...
-        if attr_type[self.node_attr] == True:
-        #if False:
-            #if instance[attr_to_index[str(self.node_attr)]] <= self.threshold:
+        if attr_type[self.node_attr] == True: # if it's numerical...
             if instance[self.node_attr] <= self.threshold:
                 return self.children[0].classify_instance(instance, attr_to_index, attr_type)
             else:
                 return self.children[1].classify_instance(instance, attr_to_index, attr_type)
         else: # otherwise it's categorical
-            # this is legitimately the worst code I've ever written in my life but at this point
-            # I have another midterm to study for and don't care, it's working
-            match self.node_attr:
-                case 0:
-                    tmp = '\ufeff#handicapped-infants'
-                case 1:
-                    tmp = 'water-project-cost-sharing'
-                case 2:
-                    tmp = 'adoption-of-the-budget-resolution'
-                case 3:
-                    tmp = 'physician-fee-freeze'
-                case 4:
-                    tmp = 'el-salvador-adi'
-                case 5:
-                    tmp = 'religious-groups-in-schools'
-                case 6:
-                    tmp = 'anti-satellite-test-ban'
-                case 7:
-                    tmp = 'aid-to-nicaraguan-contras'
-                case 8:
-                    tmp = 'mx-missile'
-                case 9:
-                    tmp = 'immigration'
-                case 10:
-                    tmp = 'synfuels-corporation-cutback'
-                case 11:
-                    tmp = 'education-spending'
-                case 12:
-                    tmp = 'superfund-right-to-sue'
-                case 13:
-                    tmp = 'crime'
-                case 14:
-                    tmp = 'duty-free-exports'
-                case 15:
-                    tmp = 'export-administration-act-south-africa'
             for child in self.children:
-                #if child.attr_val == instance[cat_to_index(self.node_attr)]: # get instance's value for the current node's 'self.node_attr'-> has to match in value with one of children
-                # need to translate self.node_attr which is a number
-                #if self.node_attr in attr_to_index:
-                # trying out replacing self.node_attr with tmp
-                if tmp in attr_to_index:
-                    #new_var = child.attr_val
-                    #print(f"If {new_var} == {instance[attr_to_index[tmp]]}")
-                    if child.attr_val == instance[attr_to_index[tmp]]: # get instance's value for the current node's 'self.node_attr'-> has to match in value with one of children
-                        #print("Recursing!")
-                        return child.classify_instance(instance, attr_to_index, attr_type)
-                else:
-                    #print(f'BAD ATTRIBUTE LABEL! ({self.node_attr}, {tmp})')
-                    return None
-            #print("GOT HERE")
+                if child.attr_val == instance[self.node_attr]: # get instance's value for the current node's 'self.node_attr'-> has to match in value with one of children
+                    return child.classify_instance(instance, attr_to_index, attr_type)
+            
+            print(f'BAD ATTRIBUTE LABEL! ({self.node_attr})')
+            return None
 
 # partition dataset 'data' based off of attribute 'attr'
 # if labels_only=True-> returns partitions ONLY WITH CLASS LABELS (0's and 1's, that's it)
@@ -300,22 +245,14 @@ def partition_data_categorical(data, attr, attr_vals: dict, attr_labels: list, l
     #print(f"attr_labels: {attr_labels}")
 
     partitions = [] # creating multi-dimensional arrays in python is weird...
-    #BUGBUG stringifying attr may break stuff
-    #for i in range(len(attr_vals[str(attr)])):
-    for i in range(3):
+    for _ in range(len(attr_vals[attr])):
         partitions.append([])
 
-    #print(f"partitions: {partitions}")
-    #BUGBUG bad attr_index
-    #for i in range(len(data[0])):
-    #    if data[0][i] == attr:
-    #        attr_index = i
-    #        break
     for i in range(len(attr_labels) - 1):
         if attr_labels[i] == attr:
             attr_index = i
             break
-    # going to abuse the fact that the attribute values are 0,1,2 and use them as indices
+    # going to abuse the fact that the categorical attribute values are 0,1,2,... and use them as indices in the partitions list
         # using value of attribute for index into partition list (array?)
     # if they weren't I could just use a dict to map the value to an index, but that looks messy....
     if labels_only == True:
