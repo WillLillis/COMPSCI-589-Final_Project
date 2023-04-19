@@ -39,7 +39,7 @@ class decision_tree:
         # evaluate stopping criteria
         if stopping_criteria == "minimal_size_for_split_criterion":
             thresh = 15 # empirical threshold
-            if (len(data)) <= thresh:
+            if len(data) <= thresh:
                 self.is_leaf = True
                 self.node_attr = None
                 self.classification = get_majority_class(data)
@@ -143,25 +143,7 @@ class decision_tree:
         else: # otherwise it's categorical
             child_data = partition_data_categorical(data, split_attr, attr_vals, attr_labels, labels_only=False) # paritition 'data' according to the current attribute 'attr'
         
-        for i in range(len(attr_type)):
-            if attr_labels[i] == split_attr:
-                split_attr_index = i
-                break
-
-        if attr_type[split_attr_index] == True: # if it's numerical...
-            for i in range(2): # with numerical attributes there's always 2 partitions
-                if len(child_data[i]) <= 1:
-                    num_zero = 0
-                    num_one = 0
-                    for instance in data:
-                        if instance[-1] == 0:
-                            num_zero +=  1
-                        else:
-                            num_one += 1
-                    majority = 0 if num_zero >= num_one else 1
-                    break
-        else: # otherwise it's categorical
-            for i in range(len(child_data)):
+        for i in range(len(child_data)):
                 if len(child_data[i]) <= 0:
                     num_zero = 0
                     num_one = 0
@@ -172,23 +154,21 @@ class decision_tree:
                             num_one += 1
                     majority = 0 if num_zero >= num_one else 1
                     break
-        if len(depth) > 10:
-            print(f"{depth}{child_data=}")
 
-        if attr_type[split_attr_index] == True: # if it's numerical...
+        if attr_type[split_attr] == True: # if it's numerical...
             # could be smarter about this, but I'm just going to hard code it...
             # dictionary doesn't get used at all, but feels better doing this than passing 'None'
             tmp_attr_val = {}
             tmp_attr_val["type"] = "numerical"
             tmp_attr_val["value"] = "leq" # less than or equal to partition
-            if len(child_data[0]) > 1:
+            if len(child_data[0]) > 0:
                 self.children.append(decision_tree(child_data[0], tmp_attr_val, stopping_criteria, attr_type, attr_labels,\
                     attr_vals, depth=depth + '\t', split_metric=split_metric))
             else:
                 self.children.append(decision_tree(child_data[0], tmp_attr_val, stopping_criteria, attr_type, attr_labels,\
                     attr_vals, depth=depth + '\t', classification=majority, split_metric=split_metric))
             tmp_attr_val["value"] = "g" # greater than partition
-            if len(child_data[1]) > 1:
+            if len(child_data[1]) > 0:
                 self.children.append(decision_tree(child_data[1], tmp_attr_val, stopping_criteria, attr_type, attr_labels,\
                     attr_vals, depth=depth + '\t', split_metric=split_metric))
             else:
@@ -280,7 +260,7 @@ def partition_data_numerical(data, attr, attr_labels: list, labels_only=True)->l
     avg = 0
     for i in range(len(data)):
         avg += data[i][attr_index]
-    avg /= (len(data) - 1) # could check before we potentially divide by 0....
+    avg /= (len(data)) # could check before we potentially divide by 0....
 
     if labels_only == True:
         for i in range(len(data)):
