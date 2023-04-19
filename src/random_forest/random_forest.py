@@ -30,6 +30,10 @@ class random_forest:
                         self.attr_vals[index].append(data[entry][index])
                         self.attr_vals[data[0][index]].append(data[entry][index])
 
+        # Now that we're done creating those helper data structures, let's remove the labels 
+        # from the first row of the dataset
+        data.pop(0)
+
         for _ in range(num_trees):
             tree_data = misc.bootstrap(data)
             self.trees.append(decision_tree.decision_tree(deepcopy(tree_data), None,\

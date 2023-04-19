@@ -14,7 +14,7 @@ import os
 def bootstrap(data: list):
     length = len(data)
     strap = list()
-    strap.append(deepcopy(data[0])) # keep the labels up top
+    #strap.append(deepcopy(data[0])) # keep the labels up top
 
     for _ in range(length - 1):
         strap.append(deepcopy(data[random.randrange(1, length - 1)]))

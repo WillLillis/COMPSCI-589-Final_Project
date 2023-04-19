@@ -42,7 +42,7 @@ class decision_tree:
         # evaluate stopping criteria
         if stopping_criteria == "minimal_size_for_split_criterion":
             thresh = 15 # empirical threshold
-            if (len(data) - 1) <= thresh:
+            if (len(data)) <= thresh:
                 self.is_leaf = True
                 self.node_attr = None
                 self.classification = get_majority_class(data)
@@ -98,7 +98,8 @@ class decision_tree:
             else:
                 info_gains = {} # information gain for each attribute
                 data_set_only_labels = [] # strip off just the class labels (0's and 1's) to calculate entropy/ info gain
-                for index in range(1, len(data)): # skip the first row (attribute labels)
+                #for index in range(1, len(data)): # skip the first row (attribute labels)
+                for index in range(len(data)):
                     data_set_only_labels.append(deepcopy(data[index][-1]))
 
                 # get random subset of dataset's attributes
@@ -114,7 +115,8 @@ class decision_tree:
         elif split_metric == "Gini":
             ginis = {}
             data_set_only_labels = []
-            for index in range(1, len(data)): # skip the first row (attribute labels)
+            #for index in range(1, len(data)): # skip the first row (attribute labels)
+            for index in range(len(data)):
                 data_set_only_labels.append(deepcopy(data[index][-1]))
 
             # get random subset of dataset's attributes
@@ -161,8 +163,7 @@ class decision_tree:
                     majority = 0 if num_zero >= num_one else 1
                     break
         else: # otherwise it's categorical
-            #for i in range(len(attr_vals[split_attr])):
-            for i in range(3):
+            for i in range(len(child_data)):
                 if len(child_data[i]) <= 1:
                     num_zero = 0
                     num_one = 0
@@ -256,12 +257,14 @@ def partition_data_categorical(data, attr, attr_vals: dict, attr_labels: list, l
         # using value of attribute for index into partition list (array?)
     # if they weren't I could just use a dict to map the value to an index, but that looks messy....
     if labels_only == True:
-         for i in range(1, len(data)): # skip the first row
+         #for i in range(1, len(data)): # skip the first row
+         for i in range(len(data)): # skip the first row
             partitions[data[i][attr_index]].append(deepcopy(data[i][-1]))
     else: #BUGBUG need to take out attribute we're partitioning based off of? would give info gain of 0 so maybe not
         for partition in partitions: # each partition needs labels up top...
             partition.append(deepcopy(data[0]))
-        for i in range(1, len(data)):
+        #for i in range(1, len(data)):
+        for i in range(len(data)):
             partitions[data[i][attr_index]].append(deepcopy(data[i]))
 
     return partitions
@@ -274,25 +277,27 @@ def partition_data_numerical(data, attr, attr_labels: list, labels_only=True)->l
     partitions.append([]) # > partition
 
     # for now we'll just use the "average" approach, will go back and try out the in between approach later
-    #BUGBUG don't use data[0]
     for i in range(len(attr_labels) - 1):
         if attr_labels[i] == attr:
             attr_index = i
             break
     # grab the average value....
     avg = 0
-    for i in range(1, len(data)): # skip the first row
+    #for i in range(1, len(data)): # skip the first row
+    for i in range(len(data)): # skip the first row
         avg += data[i][attr_index]
     avg /= (len(data) - 1) # could check before we potentially divide by 0....
 
     if labels_only == True:
-        for i in range(1, len(data)): # skip the first row
+        #for i in range(1, len(data)): # skip the first row
+        for i in range(len(data)): # skip the first row
             if data[i][attr_index] <= avg:
                 partitions[0].append(deepcopy(data[i][-1]))
             else:
                 partitions[1].append(deepcopy(data[i][-1]))
     else:
-        for i in range(1, len(data)): # skip the first row
+        #for i in range(1, len(data)): # skip the first row
+        for i in range(len(data)): # skip the first row
             if data[i][attr_index] <= avg:
                 partitions[0].append(deepcopy(data[i]))
             else:
@@ -369,9 +374,10 @@ def get_rand_cats(cats: list, num_cats_req=0):
         ret_cats.append(cats.pop(random.randrange(len(cats) - 1)))
     return ret_cats
 
+# NO LONGER ASSUMING LABELS IN FIRST ROW
 # for simplicity we'll assume the labels occupy the first row, so we'll ignore that
 def get_majority_class(data: list):
-    if len(data) < 2:
+    if len(data) < 1:
         #print("ERROR: Bad dataset!")
         return None
     counts = {}
