@@ -12,11 +12,20 @@ sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 
 class decision_tree:
     # data - The dataset passed in to create further nodes with
+    # attr_val - The value of the attribute that the node's parent made their split on
+    # stopping_criteria - Indicates what stopping criteria to use as a string, i.e. "minimal_gain_criterion"
+    # attr_type - list holding boolean values corresponding to each attribute, entry is True if the attribute 
+    #           is numeric, and false otherwise (categorical)
+    # attr_labels - list holding the attribute labels, as copied from the first row of the original dataset
+    # attr_vals - dictionary where both the attribute's string name (i.e. adoption-of-the-budget-resolution) 
+    #           as well as its index (i.e. 2) points to a list containing all the possible values for that given attribute
+    #           Only used for categorical attributes, numerical attributes just get an empty list entry
     # depth - recursive depth in terms of '\t' characters, used for debugging purposes
     # is_root - indicates whether a node is the root node, must be passed in as true for 
     #           the initial call, false for the other calls
     # classification - has argument passed in only when the caller is passing it an 
     #                  empty data set, indicates what classification (0 or 1 in the case) to make the resulting leaf node
+    # split_metric - Indicates what split metric to use as a string, i.e. "Info_Gain"
     def __init__(self, data: list, attr_val, stopping_criteria: str, attr_type: list, attr_labels: list, \
         attr_vals: dict, depth = '', is_root = False, classification = None, split_metric="Info_Gain"):
         self.children = []
@@ -179,7 +188,6 @@ class decision_tree:
             #tmp_attr_val["type"] = "categorical"
             for i in range(len(child_data)):
                 #tmp_attr_val["value"] = i
-                #if len(child_data[i]) > 1:
                 if len(child_data[i]) > 0:
                     self.children.append(decision_tree(child_data[i], i, stopping_criteria, attr_type, attr_labels,\
                         attr_vals, depth=depth + '\t', split_metric=split_metric))
@@ -219,11 +227,6 @@ class decision_tree:
     # in this case, each partition gets a row of attribute labels at the top
 # pass in attr to index dict?
 def partition_data_categorical(data, attr, attr_vals: dict, attr_labels: list, labels_only=True)->list: 
-    #print("PARTITION!!!!")
-    #print(f"attr: {attr}")
-    #print(f"attr_vals: {attr_vals}")
-    #print(f"attr_labels: {attr_labels}")
-
     partitions = [] # creating multi-dimensional arrays in python is weird...
     for _ in range(len(attr_vals[attr])):
         partitions.append([])
@@ -352,7 +355,6 @@ def get_majority_class(data: list):
         #print("ERROR: Bad dataset!")
         return None
     counts = {}
-    #for i in range(1, len(data)):
     for i in range(len(data)):
         if data[i][-1] in counts:
             counts[data[i][-1]] += 1

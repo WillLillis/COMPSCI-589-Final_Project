@@ -129,17 +129,53 @@ def test_wine(num_trees: int, num_folds: int) -> None:
                     TP_3 += 1
                 else:
                     print("wtf")
+        if TP_1 == 0 and TN_1 == 0 and FP_1 == 0 and FN_1 == 0:
+            print(f"ERROR: {TP_1=} and {TN_1=} and {FP_1=} and {FN_1=}")
+            return
         accuracy1 = (TP_1 + TN_1) / (TP_1 + TN_1 + FP_1 + FN_1)
+        if TP_2 == 0 and TN_2 == 0 and FP_2 == 0 and FN_2 == 0:
+            print(f"ERROR: {TP_2=} and {TN_2=} and {FP_2=} and {FN_2=}")
+            return
         accuracy2 = (TP_2 + TN_2) / (TP_2 + TN_2 + FP_2 + FN_2)
+        if TP_3 == 0 and TN_3 == 0 and FP_3 == 0 and FN_3 == 0:
+            print(f"ERROR: {TP_3=} and {TN_3=} and {FP_3=} and {FN_3=}")
+            return
         accuracy3 = (TP_3 + TN_3) / (TP_3 + TN_3 + FP_3 + FN_3)
+        if TP_1 == 0 and FP_1 == 0:
+            print(f"ERROR: {TP_1=} and {FP_1=}")
+            return
         precision1 = (TP_1) / (TP_1 + FP_1)
+        if TP_2 == 0 and FP_2 == 0:
+            print(f"ERROR: {TP_2=} and {FP_2=}")
+            return
         precision2 = (TP_2) / (TP_2 + FP_2)
+        if TP_3 == 0 and FP_3 == 0:
+            print(f"ERROR: {TP_3=} and {FP_3=}")
+            return
         precision3 = (TP_3) / (TP_3 + FP_3)
+        if TP_1 == 0 and FN_1 == 0:
+            print(f"ERROR: {TP_1=} and {FN_1=}")
+            return
         recall1 = (TP_1) / (TP_1 + FN_1)
+        if TP_2 == 0 and FN_2 == 0:
+            print(f"ERROR: {TP_2=} and {FN_2=}")
+            return
         recall2 = (TP_2) / (TP_2 + FN_2)
+        if TP_3 == 0 and FN_3 == 0:
+            print(f"ERROR: {TP_3=} and {FN_3=}")
+            return
         recall3 = (TP_3) / (TP_3 + FN_3)
+        if precision1 == 0 and recall1 == 0:
+            print(f"ERROR: {precision1=} and {recall1=}")
+            return
         F1_1 = (2.0 * precision1 * recall1) / (precision1 + recall1)
+        if precision2 == 0 and recall2 == 0:
+            print(f"ERROR: {precision2=} and {recall2=}")
+            return
         F1_2 = (2.0 * precision2 * recall2) / (precision2 + recall2)
+        if precision3 == 0 and recall3 == 0:
+            print(f"ERROR: {precision3=} and {recall3=}")
+            return
         F1_3 = (2.0 * precision3 * recall3) / (precision3 + recall3)
     accuracies.append((accuracy1 + accuracy2 + accuracy3) / 3.0)
     precisions.append((precision1 + precision2 + precision3) / 3.0)
@@ -192,8 +228,17 @@ def test_congress(num_trees: int, num_folds: int)-> None:
                     print("wtf")
             else:
                 print("wtf")
+        if TP == 0 and TN == 0 and FP == 0 and FN == 0:
+            print(f"ERROR! {TP=} and {TN=} and {FP=} and {FN=}")
+            return
         accuracies.append((TP + TN) / (TP + TN + FP + FN))
+        if TP == 0 and FP == 0:
+            print(f"ERROR! {TP=} and {FP=}")
+            return
         precisions.append(TP / (TP + FP))
+        if TP == 0 and FN == 0:
+            print(f"ERROR! {TP=} and {FN=}")
+            return
         recalls.append(TP / (TP + FN))
         F1s.append((2.0 * precisions[-1] * recalls[-1]) / (precisions[-1] + recalls[-1]))
     
