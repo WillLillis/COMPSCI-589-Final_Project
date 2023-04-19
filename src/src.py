@@ -1,12 +1,7 @@
 # TODO:
-    # - Clean up existing code
-        # - Remove dependence on data labels being in the first row, just consolidate to an argument
-    # - Fill in functions below to load respective data sets
-    # - Then write testing functions that will train a specified model 
-    # on the loaded data and evaluate it using the metrics of interest 
-        # - k-fold stratified cross validation with k=10
-        # - Accuracy and F1 score
-    # Might need to fight with python in adding the parent directory path so you can import things through the folders...
+    # Further cleanup of existing code
+    # Start testing random forest on new data sets
+    # have a look at knn
 import misc
 from copy import deepcopy
 import os
@@ -18,31 +13,31 @@ def test_digits():
     # originally an 8x8 grayscale pixel array, which was flattened
     # I guess values 0->15 indicate white->black for each pixel
     # going to wait to write code to load this until we see how our NN turns out
-def test_loans():
-    k_folds, attr_type, attr_labels = misc.k_folds_gen(10, os.path.join("The_Loan_Eligibility_Prediction_Dataset", "loan.csv"), True)
+def test_loans(num_folds: int)-> None:
+    k_folds, attr_type, attr_labels = misc.k_folds_gen(num_folds, os.path.join("The_Loan_Eligibility_Prediction_Dataset", "loan.csv"), True)
 
     print(f"attr_type: {attr_type}")
     print(f"attr_labels: {attr_labels}")
     for k in range(len(k_folds)):
         print(f"Fold {k}:")
         print(k_folds[k])
-def test_parkinsons():
-    k_folds, attr_type, attr_labels = misc.k_folds_gen(10, os.path.join("The_Oxford_Parkinson's_Disease_Detection_Dataset", "parkinsons.csv"), True)
+def test_parkinsons(num_folds: int)-> None:
+    k_folds, attr_type, attr_labels = misc.k_folds_gen(num_folds, os.path.join("The_Oxford_Parkinson's_Disease_Detection_Dataset", "parkinsons.csv"), True)
 
     print(f"attr_type: {attr_type}")
     print(f"attr_labels: {attr_labels}")
     for k in range(len(k_folds)):
         print(f"Fold {k}:")
         print(k_folds[k])
-def test_titanic():
-    k_folds, attr_type, attr_labels = misc.k_folds_gen(10, os.path.join("The_Titanic_Dataset", "titanic.csv"), True)
+def test_titanic(num_folds: int)-> None:
+    k_folds, attr_type, attr_labels = misc.k_folds_gen(num_folds, os.path.join("The_Titanic_Dataset", "titanic.csv"), True)
 
     print(f"attr_type: {attr_type}")
     print(f"attr_labels: {attr_labels}")
     for k in range(len(k_folds)):
         print(f"Fold {k}:")
         print(k_folds[k])
-def test_wine(num_trees: int, num_folds: int):
+def test_wine(num_trees: int, num_folds: int) -> None:
     k_folds, attr_type, data_labels = misc.k_folds_gen(num_folds, 'hw3_wine.csv', False)
     accuracies = []
     precisions = []
@@ -156,7 +151,7 @@ def test_wine(num_trees: int, num_folds: int):
     print(f"\tAvg Recall: {sum(recalls) / len(recalls)}")
     print(f"\tAvg F1 Score: {sum(F1s) / len(F1s)}")
 
-def test_congress(num_trees: int, num_folds: int):
+def test_congress(num_trees: int, num_folds: int)-> None:
     k_folds, attr_type, data_labels = misc.k_folds_gen(num_folds, 'hw3_house_votes_84.csv', False)
     accuracies = []
     precisions = []
@@ -209,11 +204,11 @@ def test_congress(num_trees: int, num_folds: int):
     print(f"\tAvg F1 Score: {sum(F1s) / len(F1s)}")
 
 def main():
-    #test_loans()
-    #test_titanic()
-    #test_parkinsons()
-    #test_digits()
-    #test_wine(10, 10)
+    #test_loans(10, 10)
+    #test_titanic(10, 10)
+    #test_parkinsons(10, 10)
+    #test_digits(10, 10)
+    test_wine(10, 10)
     test_congress(10, 10)
 
 if __name__ == "__main__":

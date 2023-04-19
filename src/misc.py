@@ -71,7 +71,7 @@ def k_folds_gen(k: int, file_name: str, normalize_attrs: bool):
         elif 'loan.csv' in file_name:
             data_reader = csv.reader(raw_data_file)
             data_set = list(data_reader)
-            # throw out the load id attribute
+            # throw out the loan id attribute
             for i in range(len(data_set)):
                 data_set[i].pop(0)
             # cast attribute values to appropriate data types from strings
