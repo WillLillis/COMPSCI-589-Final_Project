@@ -10,8 +10,6 @@ import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 
-# TODO: Remove ignoring of first row because labels aren't there for subsequent recursive calls
-
 class decision_tree:
     # data - The dataset passed in to create further nodes with
     # depth - recursive depth in terms of '\t' characters, used for debugging purposes
@@ -29,7 +27,6 @@ class decision_tree:
             self.attr_val = attr_val
         # first check if an empty dataset was passed in 
         if classification != None: # determined by caller, != None only when an empty dataset is passed in
-            #print(f'{depth}Empty partition! Creating leaf node!')
             self.is_leaf = True
             self.node_attr = None
             self.classification = classification 
@@ -53,13 +50,11 @@ class decision_tree:
              thresh = 0.1 # arbitary threshold
              info_gains = {} # information gain for each attribute
              data_set_only_labels = [] # strip off just the class labels (0's and 1's) to calculate entropy/ info gain
-             for index in range(1, len(data)): # skip the first row (attribute labels)
+             for index in range(len(data)):
                  data_set_only_labels.append(deepcopy(data[index][-1]))
 
              # get random subset of dataset's attributes
-             # BUGBUG get_rand_cats is returning garbage
              attributes = get_rand_cats(deepcopy(attr_labels))
-             #print(f"ATTRIBUTES: {attributes}")
              for i in range(len(attributes)):
                  if attr_type[i] == True: # if it's a numerical attribute...
                      partitions, _ = partition_data_numerical(data, attributes[i], attr_labels) # paritition 'data' according to the current attribute 'attr'
@@ -67,7 +62,7 @@ class decision_tree:
                      partitions = partition_data_categorical(data, attributes[i], attr_vals, attr_labels) # paritition 'data' according to the current attribute 'attr'
                  info_gains[attributes[i]] = info_gain(data_set_only_labels, partitions) 
              split_attr = max(info_gains, key = info_gains.get) # get the attribute of maximal gain
-             
+
              if info_gains[split_attr] < thresh:
                 self.is_leaf = True
                 self.node_attr = None
@@ -96,26 +91,33 @@ class decision_tree:
                 pass
             # otherwise calculate info gain as normal
             else:
+                thresh = 0.1 # arbitary threshold
                 info_gains = {} # information gain for each attribute
                 data_set_only_labels = [] # strip off just the class labels (0's and 1's) to calculate entropy/ info gain
-                #for index in range(1, len(data)): # skip the first row (attribute labels)
                 for index in range(len(data)):
                     data_set_only_labels.append(deepcopy(data[index][-1]))
 
                 # get random subset of dataset's attributes
                 attributes = get_rand_cats(deepcopy(attr_labels))
-                for attr in attributes:
-                     if attr_type[attr] == True: # if it's a numerical attribute...
-                         partitions, _ = partition_data_numerical(data, attr, attr_labels) # paritition 'data' according to the current attribute 'attr'
-                     else: # otherwise it's categorical
-                         partitions = partition_data_categorical(data, attr, attr_vals, attr_labels) # paritition 'data' according to the current attribute 'attr'
-                     info_gains[attr] = info_gain(data_set_only_labels, partitions)
+                for i in range(len(attributes)):
+                    if attr_type[i] == True: # if it's a numerical attribute...
+                        partitions, _ = partition_data_numerical(data, attributes[i], attr_labels) # paritition 'data' according to the current attribute 'attr'
+                    else: # otherwise it's categorical
+                        partitions = partition_data_categorical(data, attributes[i], attr_vals, attr_labels) # paritition 'data' according to the current attribute 'attr'
+                    info_gains[attributes[i]] = info_gain(data_set_only_labels, partitions) 
                 split_attr = max(info_gains, key = info_gains.get) # get the attribute of maximal gain
-                #print(f'{depth}Splitting based off of attribute {split_attr}, gain: {info_gains[split_attr]}')
+
+                if info_gains[split_attr] < thresh:
+                    self.is_leaf = True
+                    self.node_attr = None
+                    self.classification = get_majority_class(data)
+                    return
+                else:
+                    self.is_leaf = False
+                    self.node_attr = split_attr                
         elif split_metric == "Gini":
             ginis = {}
             data_set_only_labels = []
-            #for index in range(1, len(data)): # skip the first row (attribute labels)
             for index in range(len(data)):
                 data_set_only_labels.append(deepcopy(data[index][-1]))
 
@@ -134,7 +136,6 @@ class decision_tree:
             print("ERROR: Invalid split metric supplied!")
             return
         
-        #BUGBUG split_attr got a float value somehow?
         self.node_attr = split_attr
         # partition data based off of split_attr
         if attr_type[i] == True: # if it's a numerical attribute...
@@ -142,15 +143,12 @@ class decision_tree:
         else: # otherwise it's categorical
             child_data = partition_data_categorical(data, split_attr, attr_vals, attr_labels, labels_only=False) # paritition 'data' according to the current attribute 'attr'
         
-        # translate split_attr to an index in attr_type for if block below...
-        #BUGBUG Don't have access to data labels via data[0]
         for i in range(len(attr_type)):
             if attr_labels[i] == split_attr:
                 split_attr_index = i
                 break
 
         if attr_type[split_attr_index] == True: # if it's numerical...
-            # BUGBUG need to redo this for numerical attributes!
             for i in range(2): # with numerical attributes there's always 2 partitions
                 if len(child_data[i]) <= 1:
                     num_zero = 0
@@ -164,7 +162,7 @@ class decision_tree:
                     break
         else: # otherwise it's categorical
             for i in range(len(child_data)):
-                if len(child_data[i]) <= 1:
+                if len(child_data[i]) <= 0:
                     num_zero = 0
                     num_one = 0
                     for instance in data:
@@ -174,9 +172,10 @@ class decision_tree:
                             num_one += 1
                     majority = 0 if num_zero >= num_one else 1
                     break
+        if len(depth) > 10:
+            print(f"{depth}{child_data=}")
 
         if attr_type[split_attr_index] == True: # if it's numerical...
-            # create dictionary self.attr_val here 
             # could be smarter about this, but I'm just going to hard code it...
             # dictionary doesn't get used at all, but feels better doing this than passing 'None'
             tmp_attr_val = {}
@@ -196,12 +195,12 @@ class decision_tree:
                 self.children.append(decision_tree(child_data[1], tmp_attr_val, stopping_criteria, attr_type, attr_labels,\
                     attr_vals, depth=depth + '\t', classification=majority, split_metric=split_metric))
         else: # otherwise it's categorical
-            # Need to support dictionaries here...
             #tmp_attr_val = {}
             #tmp_attr_val["type"] = "categorical"
             for i in range(len(child_data)):
                 #tmp_attr_val["value"] = i
-                if len(child_data[i]) > 1:#if len(child_data[i]) != 0: 
+                #if len(child_data[i]) > 1:
+                if len(child_data[i]) > 0:
                     self.children.append(decision_tree(child_data[i], i, stopping_criteria, attr_type, attr_labels,\
                         attr_vals, depth=depth + '\t', split_metric=split_metric))
                 else:
@@ -257,13 +256,9 @@ def partition_data_categorical(data, attr, attr_vals: dict, attr_labels: list, l
         # using value of attribute for index into partition list (array?)
     # if they weren't I could just use a dict to map the value to an index, but that looks messy....
     if labels_only == True:
-         #for i in range(1, len(data)): # skip the first row
-         for i in range(len(data)): # skip the first row
+         for i in range(len(data)):
             partitions[data[i][attr_index]].append(deepcopy(data[i][-1]))
-    else: #BUGBUG need to take out attribute we're partitioning based off of? would give info gain of 0 so maybe not
-        for partition in partitions: # each partition needs labels up top...
-            partition.append(deepcopy(data[0]))
-        #for i in range(1, len(data)):
+    else:
         for i in range(len(data)):
             partitions[data[i][attr_index]].append(deepcopy(data[i]))
 
@@ -283,21 +278,18 @@ def partition_data_numerical(data, attr, attr_labels: list, labels_only=True)->l
             break
     # grab the average value....
     avg = 0
-    #for i in range(1, len(data)): # skip the first row
-    for i in range(len(data)): # skip the first row
+    for i in range(len(data)):
         avg += data[i][attr_index]
     avg /= (len(data) - 1) # could check before we potentially divide by 0....
 
     if labels_only == True:
-        #for i in range(1, len(data)): # skip the first row
-        for i in range(len(data)): # skip the first row
+        for i in range(len(data)):
             if data[i][attr_index] <= avg:
                 partitions[0].append(deepcopy(data[i][-1]))
             else:
                 partitions[1].append(deepcopy(data[i][-1]))
     else:
-        #for i in range(1, len(data)): # skip the first row
-        for i in range(len(data)): # skip the first row
+        for i in range(len(data)):
             if data[i][attr_index] <= avg:
                 partitions[0].append(deepcopy(data[i]))
             else:
@@ -334,7 +326,8 @@ def info_gain(orig_data, data_split):
     
     avg_entropy = 0
     for entry in entropies:
-        avg_entropy += (entry[1] / len(orig_data)) * entry[0]  # weighted average-> (size of partition/ size of set) * entropy of partition
+        if len(orig_data) > 0: # avoid dividing by 0, and empty set should have an entropy of 0 so skipping the addition is fine (not adding anything is the same as adding 0)
+            avg_entropy += (entry[1] / len(orig_data)) * entry[0]  # weighted average-> (size of partition/ size of set) * entropy of partition
 
     return entropy(orig_data) - avg_entropy 
 
@@ -374,144 +367,21 @@ def get_rand_cats(cats: list, num_cats_req=0):
         ret_cats.append(cats.pop(random.randrange(len(cats) - 1)))
     return ret_cats
 
-# NO LONGER ASSUMING LABELS IN FIRST ROW
-# for simplicity we'll assume the labels occupy the first row, so we'll ignore that
 def get_majority_class(data: list):
     if len(data) < 1:
         #print("ERROR: Bad dataset!")
         return None
     counts = {}
-    for i in range(1, len(data)):
+    #for i in range(1, len(data)):
+    for i in range(len(data)):
         if data[i][-1] in counts:
             counts[data[i][-1]] += 1
         else:
             counts[data[i][-1]] = 1
     return max(counts, key=counts.get)
 
-# read in the data from the csv and randomly split into training (80%) and test (20%) sets, return these sets
-def prepare_data(file_name: str):
-    # load in data
-    data_set = [] # entire dataset, as read in from the csv
-    training_set = [] # training set partition of the entire data set
-    test_set = [] # testing partition of the entire data set
-    cat_to_attr_label = {}
-    num_attr = 0
-    num_entries = 0
-
-    with open(file_name, encoding="utf-8") as raw_data_file:
-        data_reader = csv.reader(raw_data_file)
-        data_set = list(data_reader)
-    
-    # grab some general info about the data set...
-    # see how many attributes are in the data set
-    for item in data_set[0]:
-        num_attr += 1
-    num_attr -= 1 # just assume the last item in a row is the label....
-    num_entries = len(data_set) - 1 # don't count the attribute labels up top
-    
-    # sanity checks
-    if num_attr <= 0 or num_entries == 0:
-        print("Error: Bad data")
-        return
-    else:
-        #print(f"Dataset has {num_entries} entries with {num_attr} attributes.")
-        pass
-
-    # I imagine this doesn't generalize to other data sets, but for this one we'll cast all of the attributes to ints
-    for entry in range(1, num_entries + 1):
-        for attr in range(num_attr + 1): # also want to cast the class labels as ints
-            data_set[entry][attr] = int(data_set[entry][attr])
-
-    for index in range(len(data_set[0])):
-        cat_to_attr_label[data_set[0][index]] = index
-    #for labels in data_set[0]:
-    #    cat_to_attr_label[]
-    # split between training (80%) and testing data (20%)
-    training_set_size = int(num_entries * 0.8)
-    test_set_size = int(num_entries * 0.2)
-    # deal with any potential rounding issues
-    while (training_set_size + test_set_size) > num_entries:
-        test_set_size -= 1
-    while (training_set_size + test_set_size) < num_entries:
-        training_set_size += 1
-    
-    training_set.append(data_set.pop(0)) # need class labels at the top of the training set
-    # randomly select the entries to go into the training set, note this selection method also randomizes the order
-    for _ in range(training_set_size):
-        training_set.append(data_set.pop(randrange(num_entries)))
-        num_entries -= 1
-
-    test_set = deepcopy(data_set) # remaining entries become the test set
-
-    return training_set, test_set, cat_to_attr_label
-
 def main():
     pass
-    #test_set_acc = []
-    #training_set_acc = []
-    #for _ in range(100):
-    #    training_set, test_set, cat_to_attr_index = prepare_data()
-    #    tree = decision_tree(training_set, None, '', is_root=True, split_metric="Gini")
-    #    #tree = decision_tree(training_set, None, '', is_root=True, extra_stop=True)
-    #    #tree.recursive_print()
-    #    num_correct = 0
-    #    for example in test_set:
-    #        if tree.classify_instance(example, cat_to_attr_index) == example[-1]:
-    #            num_correct += 1
-    #    #print(f'Test set score: {num_correct / len(test_set)}')
-    #    test_set_acc.append(num_correct / len(test_set))
-
-    #    num_correct = 0
-    #    for index in range(1, len(training_set)): # skip the first row (attribute labels)
-    #        if tree.classify_instance(training_set[index], cat_to_attr_index) == training_set[index][-1]:
-    #            num_correct += 1
-    #    #print(f'Training set score: {num_correct / len(training_set)}')
-    #    training_set_acc.append(num_correct / len(training_set))
-
-    #print(f'Test set average score: {sum(test_set_acc) / len(test_set_acc)}, stdev: {stdev(test_set_acc)}')
-    #print(f'Training set average score: {sum(training_set_acc) / len(training_set_acc)}, stdev: {stdev(training_set_acc)}')
-
-    #training_plot = plt.figure(1)
-    #plt.hist(training_set_acc, 10, ec="k")
-    #plt.xlabel("Accuracy (%)")
-    #plt.ylabel("Counts/Bin")
-    #plt.title("Training Set Accuracy")
-    #training_plot.show()
-
-    #test_plot = plt.figure(2)
-    #plt.hist(test_set_acc, 10, ec="k")
-    #plt.xlabel("Accuracy (%)")
-    #plt.ylabel("Counts/Bin")
-    #plt.title("Test Set Accuracy")
-    #test_plot.show()
-
-    
-
-    #input()
 
 if __name__ == '__main__':
     main()
-    #with open('house_votes_84.csv', encoding="utf-8") as raw_data_file:
-    #    data_reader = csv.reader(raw_data_file)
-    #    data_set = list(data_reader)
-    
-    ## grab some general info about the data set...
-    ## see how many attributes are in the data set
-    #num_attr = 0
-    #num_entries = 0
-    #cat_to_attr_label = {}
-    #for item in data_set[0]:
-    #    num_attr += 1
-    #num_attr -= 1 # just assume the last item in a row is the label....
-    #num_entries = len(data_set) - 1 # don't count the attribute labels up top
-
-    ## I imagine this doesn't generalize to other data sets, but for this one we'll cast all of the attributes to ints
-    #for entry in range(1, num_entries + 1):
-    #    for attr in range(num_attr + 1): # also want to cast the class labels as ints
-    #        data_set[entry][attr] = int(data_set[entry][attr])
-
-    #for index in range(len(data_set[0])):
-    #    cat_to_attr_label[data_set[0][index]] = index
-    
-    #tree = decision_tree(data_set, None, '', is_root=True)
-    #tree.recursive_print()

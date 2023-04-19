@@ -213,7 +213,7 @@ def main():
     #test_titanic()
     #test_parkinsons()
     #test_digits()
-    test_wine(10, 10)
+    #test_wine(10, 10)
     test_congress(10, 10)
 
 if __name__ == "__main__":
