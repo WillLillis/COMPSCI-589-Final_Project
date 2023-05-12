@@ -7,7 +7,7 @@ import numpy as np
 import os
 from statistics import stdev
 
-def main(regularization: float, net_shape: list, train_set, test_set):
+def main(regularization: float, net_shape: list, training_set, testing_set, file_name: str):
     weights = set_weights(net_shape)
     # for regularized cost
     # split = int(len(data_set) * .7)
@@ -37,7 +37,7 @@ def main(regularization: float, net_shape: list, train_set, test_set):
     training_set = training_set[:, :-1]
     testing_set = testing_set[:, :-1]
     final_weights = back_propogate(weights, training_set, expected_outputs, net_shape, regularization)
-    accuracy, precision, recall = test(final_weights, testing_set, expected_test_outputs)
+    accuracy, precision, recall = test(final_weights, testing_set, expected_test_outputs, regularization, file_name)
 
     if precision == 0 and recall == 0:
         f1 = 0
@@ -58,7 +58,7 @@ def normalize(data_set):
             data_set[i][column] = float((data_set[i][column] - a_min) / (a_max - a_min))
     return data_set
 
-def test(weights, testing_set, expected_outputs):
+def test(weights, testing_set, expected_outputs, regularization, file_name):
     correct = 0
     true_pos = 0
     true_pos_1 = 0
@@ -186,44 +186,6 @@ def test(weights, testing_set, expected_outputs):
             testing_recall = true_pos/(true_pos + false_neg)
 
     return testing_accuracy, testing_precision, testing_recall
-
-def stratified_kfold(data, k, test):
-    classes = {}
-    if file_name == 'hw3_house_votes_84.csv' or file_name == 'hw3_cancer.csv':
-        file_index = -1
-    else:
-        file_index = 0
-    for row in data:
-        idx = int(row[file_index])
-        if idx not in classes:
-            classes[idx] = []
-            classes[idx].append(row)
-        else:
-            classes[idx].append(row)
-
-    for _, cls in classes.items():
-        arr = np.array(cls)
-        np.random.shuffle(arr)
-        cls = list(arr)
-    fold_size = int(len(data) / k)
-    folds = []
-    for i in range(k):
-        fold = []
-        for idx, cls in classes.items():
-            ratio = len(classes[idx])/len(data)
-            fold_range = int(fold_size * ratio)+1
-            indices = cls[int(i*fold_range):int((i+1)*fold_range)]
-            for row in indices:
-                fold.append(row)
-        folds.append(fold)
-
-    testing_data = []
-    for i in range(len(folds)):
-        if i != test:
-            testing_data = testing_data + folds[i]
-
-    return np.array(testing_data), np.array(folds[test])
-
 
 def set_weights(net_shape):
     weights = []

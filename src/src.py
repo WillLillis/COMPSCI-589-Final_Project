@@ -5,6 +5,7 @@
 import misc
 from copy import deepcopy
 import os
+import numpy as np
 from random_forest import random_forest
 from neural_net import neural_net
 
@@ -25,16 +26,19 @@ def test_loans(num_folds: int)-> None:
 def test_parkinsons(num_folds: int)-> None:
     k_folds, attr_type, attr_labels = misc.k_folds_gen(num_folds, os.path.join("The_Oxford_Parkinson's_Disease_Detection_Dataset", "parkinsons.csv"), True)
 
-    print(f"attr_type: {attr_type}")
-    print(f"attr_labels: {attr_labels}")
-    for k in range(len(k_folds)):
-        print(f"Fold {k}:")
-        print(k_folds[k])
+    # print(f"attr_type: {attr_type}")
+    # print(f"attr_labels: {attr_labels}")
+    # for k in range(len(k_folds)):
+        # print(f"Fold {k}:")
+        # print(k_folds[k])
     test_set = k_folds[0]
-    training_set = list()
+    training_set = []
+    counter = 0
     for k in range(1, len(k_folds)):
-        training_set.append(k_folds[k])
-    neural_net.main(0.0, [10,10,10], training_set, test_set)
+        training_set += k_folds[k]
+    accuracy, precision, recall, f1 = neural_net.main(0, [22,10,10,2], np.array(training_set), np.array(test_set), 'parkinsons.csv')
+    print(f'{accuracy=}')
+    print(f'{f1=}')
     
 
 def test_titanic(num_folds: int)-> None:
