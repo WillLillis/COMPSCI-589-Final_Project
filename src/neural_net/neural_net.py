@@ -1,4 +1,5 @@
 import sys
+import os
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 from copy import deepcopy
 from math import sqrt, log2, floor
@@ -10,7 +11,7 @@ cur_path = os.path.join(os.path.dirname(__file__), os.pardir)
 file_name = 'parkinsons.csv'
 # file_name = 'optdigits.tes'
 
-def main(regularization, net_shape, train_set, test_set):
+def main(regularization: float, net_shape: list, train_set, test_set):
     # stratified cross validation
     weights = set_weights(net_shape)
     accuracy = 0

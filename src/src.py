@@ -6,6 +6,7 @@ import misc
 from copy import deepcopy
 import os
 from random_forest import random_forest
+from neural_net import neural_net
 
 def test_digits():
     pass
@@ -29,6 +30,13 @@ def test_parkinsons(num_folds: int)-> None:
     for k in range(len(k_folds)):
         print(f"Fold {k}:")
         print(k_folds[k])
+    test_set = k_folds[0]
+    training_set = list()
+    for k in range(1, len(k_folds)):
+        training_set.append(k_folds[k])
+    neural_net.main(0.0, [10,10,10], training_set, test_set)
+    
+
 def test_titanic(num_folds: int)-> None:
     k_folds, attr_type, attr_labels = misc.k_folds_gen(num_folds, os.path.join("The_Titanic_Dataset", "titanic.csv"), True)
 
@@ -251,7 +259,7 @@ def test_congress(num_trees: int, num_folds: int)-> None:
 def main():
     #test_loans(10, 10)
     #test_titanic(10, 10)
-    test_parkinsons(10, 10)
+    test_parkinsons(10)
     #test_digits(10, 10)
     # test_wine(10, 10)
     # test_congress(10, 10)
