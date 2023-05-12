@@ -10,7 +10,15 @@ from random_forest import random_forest
 from neural_net import neural_net
 
 def test_digits(num_folds: int) -> None:
-    pass
+    k_folds, attr_type, attr_labels = misc.k_folds_gen(num_folds, os.path.join("The_Hand-Written_Digits_Recognition_Dataset", "optdigits.tra"), True)
+    
+    test_set = k_folds[0]
+    training_set = []
+    for k in range(1, len(k_folds)):
+        training_set += k_folds[k]
+    accuracy, precision, recall, f1 = neural_net.main(0, [64,10,10,10], np.array(training_set), np.array(test_set), 'optdigits')
+    print(f'{accuracy=}')
+    print(f'{f1=}')
     # digits stored as rows of 64 numbers
     # originally an 8x8 grayscale pixel array, which was flattened
     # I guess values 0->15 indicate white->black for each pixel
@@ -33,7 +41,6 @@ def test_parkinsons(num_folds: int)-> None:
         # print(k_folds[k])
     test_set = k_folds[0]
     training_set = []
-    counter = 0
     for k in range(1, len(k_folds)):
         training_set += k_folds[k]
     accuracy, precision, recall, f1 = neural_net.main(0, [22,10,10,2], np.array(training_set), np.array(test_set), 'parkinsons.csv')
@@ -263,8 +270,8 @@ def test_congress(num_trees: int, num_folds: int)-> None:
 def main():
     #test_loans(10, 10)
     #test_titanic(10, 10)
-    test_parkinsons(10)
-    #test_digits(10, 10)
+    # test_parkinsons(10)
+    test_digits(10)
     # test_wine(10, 10)
     # test_congress(10, 10)
 

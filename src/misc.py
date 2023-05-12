@@ -172,7 +172,25 @@ def k_folds_gen(k: int, file_name: str, normalize_attrs: bool):
                             tmp_max = max(tmp_max, data_set[j][i])
                         for j in range(1, len(data_set)): # Scale all the values according to this max value
                             data_set[j][i] /= tmp_max
-        # no idea what to do with the MNIST files, absolute mess
+        # TODO: separate test and training files :(
+        elif 'optdigits' in file_name:
+            data_reader = csv.reader(raw_data_file)
+            data_set = list(data_reader)
+            # cast attribute values to appropriate data types from strings
+            for i in range(1, len(data_set)):
+                for j in range(len(data_set[0])):
+                    data_set[i][j] = float(data_set[i][j])
+            # TODO: do this for 64 classes lol - check optdigits.names
+            for i in range(64):
+                attr_type.append(False) # 1st input
+            if normalize_attrs:
+                for i in range(len(attr_type)):
+                    if attr_type[i]: # if it's a numerical attribute
+                        tmp_max = 0
+                        for j in range(1, len(data_set)): # Find the max value for the given numerical attribute
+                            tmp_max = max(tmp_max, data_set[j][i])
+                        for j in range(1, len(data_set)): # Scale all the values according to this max value
+                            data_set[j][i] /= tmp_max
         else:
             print(f"Bad file name passed as parameter! ({file_name})")
             return None
