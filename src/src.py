@@ -7,7 +7,7 @@ from copy import deepcopy
 import os
 from random_forest import random_forest
 
-def test_digits():
+def test_digits(num_folds: int) -> None:
     pass
     # digits stored as rows of 64 numbers
     # originally an 8x8 grayscale pixel array, which was flattened

@@ -6,66 +6,44 @@ import numpy as np
 import os
 from statistics import stdev
 
-cur_path = os.path.join(os.path.dirname(__file__), os.pardir)
-file_name = 'parkinsons.csv'
-# file_name = 'optdigits.tes'
-
-def main(regularization, net_shape, train_set, test_set):
-    # stratified cross validation
+def main(regularization: float, net_shape: list, train_set, test_set):
     weights = set_weights(net_shape)
-    accuracy = 0
-    precision = 0
-    recall = 0
-    for i in range(k_folds):
-        # for regularized cost
-        # split = int(len(data_set) * .7)
-        # end = 5
-        # while end <= split:
-        training_set, testing_set = stratified_kfold(data_set, k_folds, i)
-        # 1 fold puts everything in testing set, so we split it
-        # np.random.shuffle(testing_set)
-        # training_set = testing_set[:end]
-        # testing_set = testing_set[split:]
-        # end += 5
-        expected_outputs = []
-        classifications = training_set[:, -1:]
-        for row in classifications:
-            output = np.zeros(net_shape[-1])
-            # TODO: this is wrong, need to fix
-            output[int(row)] = 1
-            expected_outputs.append(output)
+    # for regularized cost
+    # split = int(len(data_set) * .7)
+    # end = 5
+    # while end <= split:
+    # 1 fold puts everything in testing set, so we split it
+    # np.random.shuffle(testing_set)
+    # training_set = testing_set[:end]
+    # testing_set = testing_set[split:]
+    # end += 5
+    expected_outputs = []
+    classifications = training_set[:, -1:]
+    for row in classifications:
+        output = np.zeros(net_shape[-1])
+        # TODO: this is wrong, need to fix
+        output[int(row)] = 1
+        expected_outputs.append(output)
 
-        expected_test_outputs = []
-        classifications = testing_set[:, -1:]
-        for row in classifications:
-            output = np.zeros(net_shape[-1])
-            # TODO: this is wrong, need to fix
-            output[int(row)] = 1
-            expected_test_outputs.append(output)
+    expected_test_outputs = []
+    classifications = testing_set[:, -1:]
+    for row in classifications:
+        output = np.zeros(net_shape[-1])
+        # TODO: this is wrong, need to fix
+        output[int(row)] = 1
+        expected_test_outputs.append(output)
 
-        if file_name == 'parkinsons.csv':
-            training_set = normalize(training_set)
-            testing_set = normalize(testing_set)
+    training_set = training_set[:, :-1]
+    testing_set = testing_set[:, :-1]
+    final_weights = back_propogate(weights, training_set, expected_outputs, net_shape, regularization)
+    accuracy, precision, recall = test(final_weights, testing_set, expected_test_outputs)
 
-        training_set = training_set[:, :-1]
-        testing_set = testing_set[:, :-1]
-        final_weights = back_propogate(weights, training_set, expected_outputs, net_shape, regularization)
-        testing_accuracy, testing_precision, testing_recall = test(final_weights, testing_set, expected_test_outputs)
-        accuracy += testing_accuracy
-        precision += testing_precision
-        recall += testing_recall
-
-    accuracy = accuracy / k_folds
-    precision = precision / k_folds
-    recall = recall / k_folds
     if precision == 0 and recall == 0:
         f1 = 0
     else:
         f1 = (2 * precision * recall)/(precision + recall)
-    print(f'testing set accuracy: {accuracy}')
-    # print(f'testing set precision: {precision}')
-    # print(f'testing set recall: {recall}')
-    print(f'testing set f1 score: {f1}')
+
+    return accuracy, precision, recall, f1
 
 
 def normalize(data_set):
@@ -428,7 +406,6 @@ if __name__ == '__main__':
 
 
     # MAIN FUNCTION
-    k_folds = 10
     regularization = 0
     # HOUSE_VOTES
     net_shape = [22, 8, 8, 8, 2]
@@ -436,4 +413,4 @@ if __name__ == '__main__':
     # net_shape = [13, 16, 16, 16, 16, 3]
     # CANCER
     # net_shape = [9, 16, 16, 16, 16, 2]
-    main(regularization, net_shape, k_folds)
+    # main(regularization, net_shape, k_folds)
