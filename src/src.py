@@ -251,10 +251,10 @@ def test_congress(num_trees: int, num_folds: int)-> None:
 def main():
     #test_loans(10, 10)
     #test_titanic(10, 10)
-    #test_parkinsons(10, 10)
+    test_parkinsons(10, 10)
     #test_digits(10, 10)
-    test_wine(10, 10)
-    test_congress(10, 10)
+    # test_wine(10, 10)
+    # test_congress(10, 10)
 
 if __name__ == "__main__":
     main()

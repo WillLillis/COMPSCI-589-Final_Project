@@ -33,7 +33,7 @@ def k_folds_gen(k: int, file_name: str, normalize_attrs: bool):
 
     # True for numeric, False for categorical
     attr_type = list()
-    with open(os.path.join(os.path.dirname(__file__), os.pardir, os.path.join('data',file_name)), encoding="utf-8") as raw_data_file: 
+    with open(os.path.join(os.path.dirname(__file__), os.pardir, os.path.join('datasets',file_name)), encoding="utf-8") as raw_data_file: 
     #with open(file_name, encoding="utf-8") as raw_data_file:
         # the data files all follow different labeling conventions and/or use different delimiters...
         # could make this more general, but here we'll more or less hardcode in the correct procedure for
