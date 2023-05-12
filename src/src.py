@@ -12,6 +12,13 @@ from neural_net import neural_net
 def test_digits(num_folds: int) -> None:
     k_folds, attr_type, attr_labels = misc.k_folds_gen(num_folds, os.path.join("The_Hand-Written_Digits_Recognition_Dataset", "optdigits.comb"), True)
     
+    # print(f"attr_type: {attr_type}")
+    # print(f"attr_labels: {attr_labels}")
+    for k in range(len(k_folds)):
+        # print(f"Fold {k}:")
+        # print(k_folds[k])
+        print(len(k_folds[k]))
+        
     test_set = k_folds[0]
     training_set = []
     for k in range(1, len(k_folds)):
@@ -40,9 +47,10 @@ def test_parkinsons(num_folds: int)-> None:
 
     # print(f"attr_type: {attr_type}")
     # print(f"attr_labels: {attr_labels}")
-    # for k in range(len(k_folds)):
+    for k in range(len(k_folds)):
         # print(f"Fold {k}:")
         # print(k_folds[k])
+        print(len(k_folds[k]))
     test_set = k_folds[0]
     training_set = []
     for k in range(1, len(k_folds)):

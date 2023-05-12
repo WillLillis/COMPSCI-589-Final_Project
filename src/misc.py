@@ -6,6 +6,7 @@
 # our "out of bag" instances???
 from copy import deepcopy
 import csv
+import numpy as np
 import random
 import sys
 import os
@@ -212,56 +213,24 @@ def k_folds_gen(k: int, file_name: str, normalize_attrs: bool):
     for item in class_partitioned:
         class_proportions[item] = len(class_partitioned[item]) / (len(data_set) - 1)
 
-    # create list of lists to hold our k folds
-    k_folds = []
-    for _ in range(k):
-        k_folds.append([])
 
-    entries_per_fold = int((len(data_set) - 1) / k)
-    while k * entries_per_fold > (len(data_set) - 1):
-        entries_per_fold -= 1
+    for _, cls in class_partitioned.items():
+        arr = np.array(cls)
+        np.random.shuffle(arr)
+        cls = list(arr)
+    fold_size = int((len(data_set)-1) / k)
+    folds = []
+    for i in range(k):
+        fold = []
+        for idx, cls in class_partitioned.items():
+            ratio = len(class_partitioned[idx])/(len(data_set)-1)
+            fold_range = int(fold_size * ratio)+1
+            indices = cls[int(i*fold_range):int((i+1)*fold_range)]
+            for row in indices:
+                fold.append(row)
+        folds.append(fold)
 
-    if len(class_proportions) == 2:
-        for index in range(k):
-            for _ in range(entries_per_fold):
-                if random.uniform(0,1) <= class_proportions[0]:
-                    if len(class_partitioned[0]) == 0:
-                        break
-                    tmp = random.randrange(len(class_partitioned[0]))
-                    new_entry = class_partitioned[0].pop(tmp)
-                    k_folds[index].append(new_entry)
-                else:
-                    if len(class_partitioned[1]) == 0:
-                        break
-                    tmp = random.randrange(len(class_partitioned[1]))
-                    new_entry = class_partitioned[1].pop(tmp)
-                    k_folds[index].append(new_entry)
-    elif len(class_proportions) == 3:
-        for index in range(k):
-            for _ in range(entries_per_fold):
-                u = random.uniform(0,1)
-                if u <= class_proportions[1]:
-                    if len(class_partitioned[1]) == 0:
-                        break
-                    tmp = random.randrange(len(class_partitioned[1]))
-                    new_entry = class_partitioned[1].pop(tmp)
-                    k_folds[index].append(new_entry)
-                elif (u > class_proportions[1]) and (u <= (class_proportions[1] + class_proportions[2])):
-                    if len(class_partitioned[2]) == 0:
-                        break
-                    tmp = random.randrange(len(class_partitioned[2]))
-                    new_entry = class_partitioned[2].pop(tmp)
-                    k_folds[index].append(new_entry)
-                else:
-                    if len(class_partitioned[3]) == 0:
-                        break
-                    tmp = random.randrange(len(class_partitioned[3]))
-                    new_entry = class_partitioned[3].pop(tmp)
-                    k_folds[index].append(new_entry)
-    else:
-        print("ERROR!!!!!!!")
-
-    return k_folds, attr_type, deepcopy(data_set[0])
+    return folds, attr_type, deepcopy(data_set[0])
 
     # populate the folds according to the original data set's class proportions
     # ok to do this in a randomized fashion?
