@@ -196,7 +196,6 @@ def k_folds_gen(k: int, file_name: str, normalize_attrs: bool):
                         #    tmp_min = min(tmp_min, data_set[j][i])
                         #for j in range(len(data_set)): # Scale all the values according to this max value
                         #    data_set[j][i] = (data_set[j][i] - tmp_min) / (tmp_max - tmp_min)
-            print(f"Dataset:\n\n\n{data_set}")
         else:
             print(f"Bad file name passed as parameter! ({file_name})")
             return None

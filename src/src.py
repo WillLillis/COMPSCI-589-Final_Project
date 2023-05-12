@@ -14,22 +14,16 @@ def test_digits(num_folds: int) -> None:
     
     # print(f"attr_type: {attr_type}")
     # print(f"attr_labels: {attr_labels}")
-    for k in range(len(k_folds)):
-        # print(f"Fold {k}:")
-        # print(k_folds[k])
-        print(len(k_folds[k]))
+    for k in range(num_folds):
+        training_set = []
+        test_set = k_folds[k]
+        for index in range(num_folds):
+            if index != k:
+                training_set += k_folds[index]
         
-    test_set = k_folds[0]
-    training_set = []
-    for k in range(1, len(k_folds)):
-        training_set += k_folds[k]
-    
-    print(f"Training set:\n\n\n{training_set}")
-    return
-
-    accuracy, precision, recall, f1 = neural_net.main(0, [64,10,10,10], np.array(training_set), np.array(test_set), 'optdigits')
-    print(f'{accuracy=}')
-    print(f'{f1=}')
+        accuracy, precision, recall, f1 = neural_net.main(0, [64,10,10,10], np.array(training_set), np.array(test_set), 'optdigits')
+        print(f'{accuracy=}')
+        print(f'{f1=}')
     # digits stored as rows of 64 numbers
     # originally an 8x8 grayscale pixel array, which was flattened
     # I guess values 0->15 indicate white->black for each pixel
@@ -37,27 +31,34 @@ def test_digits(num_folds: int) -> None:
 def test_loans(num_folds: int)-> None:
     k_folds, attr_type, attr_labels = misc.k_folds_gen(num_folds, os.path.join("The_Loan_Eligibility_Prediction_Dataset", "loan.csv"), True)
 
-    print(f"attr_type: {attr_type}")
-    print(f"attr_labels: {attr_labels}")
-    for k in range(len(k_folds)):
-        print(f"Fold {k}:")
-        print(k_folds[k])
+    # print(f"attr_type: {attr_type}")
+    # print(f"attr_labels: {attr_labels}")
+    for k in range(num_folds):
+        training_set = []
+        test_set = k_folds[k]
+        for index in range(num_folds):
+            if index != k:
+                training_set += k_folds[index]
+        
+        accuracy, precision, recall, f1 = neural_net.main(0, [11,10,10,2], np.array(training_set), np.array(test_set), 'optdigits')
+        print(f'{accuracy=}')
+        print(f'{f1=}')
+
 def test_parkinsons(num_folds: int)-> None:
     k_folds, attr_type, attr_labels = misc.k_folds_gen(num_folds, os.path.join("The_Oxford_Parkinson's_Disease_Detection_Dataset", "parkinsons.csv"), True)
 
     # print(f"attr_type: {attr_type}")
     # print(f"attr_labels: {attr_labels}")
-    for k in range(len(k_folds)):
-        # print(f"Fold {k}:")
-        # print(k_folds[k])
-        print(len(k_folds[k]))
-    test_set = k_folds[0]
-    training_set = []
-    for k in range(1, len(k_folds)):
-        training_set += k_folds[k]
-    accuracy, precision, recall, f1 = neural_net.main(0, [22,10,10,2], np.array(training_set), np.array(test_set), 'parkinsons.csv')
-    print(f'{accuracy=}')
-    print(f'{f1=}')
+    for k in range(num_folds):
+        training_set = []
+        test_set = k_folds[k]
+        for index in range(num_folds):
+            if index != k:
+                training_set += k_folds[index]
+        
+        accuracy, precision, recall, f1 = neural_net.main(0, [22,10,10,2], np.array(training_set), np.array(test_set), 'optdigits')
+        print(f'{accuracy=}')
+        print(f'{f1=}')
     
 
 def test_titanic(num_folds: int)-> None:
@@ -65,11 +66,19 @@ def test_titanic(num_folds: int)-> None:
 
     print(f"attr_type: {attr_type}")
     print(f"attr_labels: {attr_labels}")
-    for k in range(len(k_folds)):
-        print(f"Fold {k}:")
-        print(k_folds[k])
+    for k in range(num_folds):
+        training_set = []
+        test_set = k_folds[k]
+        for index in range(num_folds):
+            if index != k:
+                training_set += k_folds[index]
+        
+        accuracy, precision, recall, f1 = neural_net.main(0, [6,10,10,2], np.array(training_set), np.array(test_set), 'optdigits')
+        print(f'{accuracy=}')
+        print(f'{f1=}')
+
 def test_wine(num_trees: int, num_folds: int) -> None:
-    k_folds, attr_type, data_labels = misc.k_folds_gen(num_folds, 'hw3_wine.csv', False)
+    k_folds, attr_type, data_labels = misc.k_folds_gen(num_folds, 'hw3_wine.csv', True)
     accuracies = []
     precisions = []
     recalls = []
@@ -87,6 +96,10 @@ def test_wine(num_trees: int, num_folds: int) -> None:
             data_labels_num[i] = i
 
         forest = random_forest.random_forest(data, num_trees, attr_type, data_labels_num)
+
+        # accuracy, precision, recall, f1 = neural_net.main(0, [13,10,10,2], np.array(data), np.array(test_fold), 'hw3_wine.csv')
+        # print(f'{accuracy=}')
+        # print(f'{f1=}')
 
         accuracy1 = 0
         accuracy2 = 0
@@ -240,6 +253,10 @@ def test_congress(num_trees: int, num_folds: int)-> None:
             data_labels_num[i] = i
 
         forest = random_forest.random_forest(data, num_trees, attr_type, data_labels_num)
+
+        # accuracy, precision, recall, f1 = neural_net.main(0, [22,10,10,2], np.array(data), np.array(test_fold), 'hw3_house_votes_84.csv')
+        # print(f'{accuracy=}')
+        # print(f'{f1=}')
         
         for entry in test_fold:
             output = forest.classify_instance(entry, attr_type)
@@ -280,10 +297,10 @@ def test_congress(num_trees: int, num_folds: int)-> None:
     print(f"\tAvg F1 Score: {sum(F1s) / len(F1s)}")
 
 def main():
-    #test_loans(10, 10)
-    #test_titanic(10, 10)
+    # test_loans(10)
+    test_titanic(10)
     # test_parkinsons(10)
-    test_digits(10)
+    # test_digits(10)
     # test_wine(10, 10)
     # test_congress(10, 10)
 
