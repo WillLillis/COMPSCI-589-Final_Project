@@ -1,4 +1,5 @@
 import sys
+import os
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 from copy import deepcopy
 from math import sqrt, log2, floor
