@@ -5,6 +5,7 @@ from statistics import stdev
 import matplotlib.pyplot as plt
 import sys
 import os
+import numpy as np
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 
 # read in the data from the csv, normalize it, randomly split into training and test sets, return these sets
@@ -76,7 +77,7 @@ def euclidean_dist(x_1, x_2):
         accum += (x_1[i] - x_2[i])**2
     return accum**0.5
 
-def knn_classify(neighbors, instance, k, distance_func):
+def knn_classify(neighbors, instance, k, distance_func=euclidean_dist):
     neighbors_local = deepcopy(neighbors) # make a copy of neighbors so we don't mess with the original list's contents
     
     for i in range(len(neighbors_local)):
@@ -92,7 +93,20 @@ def knn_classify(neighbors, instance, k, distance_func):
             votes[neighbors_local[i][-2]] = 1 # ...otherwise add it to the dict
 
     return max(votes, key = votes.get)
-            
+ 
+def knn_test(neighbors: list, test_instances: list, k: int, distance_func=euclidean_dist):
+    true_labels = test_instances[:-1]
+    pred_labels = []
+
+    for entry in test_instances:
+        pred_labels.append(knn_classify(neighbors, k))
+    
+    # hard coding 10 for testing purposes, will generalize later
+    conf_matrix = np.zeros((10, 10), dtype=int)
+
+    for i in range(len(true_labels)):
+        conf_matrix[true_labels[i]][pred_labels[i]] += 1
+
 
 #def main():
 #    x_points = []

@@ -8,6 +8,7 @@ import os
 import numpy as np
 from random_forest import random_forest
 from neural_net import neural_net
+from knn import knn
 
 def test_digits(num_folds: int) -> None:
     k_folds, attr_type, attr_labels = misc.k_folds_gen(num_folds, os.path.join("The_Hand-Written_Digits_Recognition_Dataset", "optdigits.comb"), True)
@@ -24,8 +25,8 @@ def test_digits(num_folds: int) -> None:
     for k in range(1, len(k_folds)):
         training_set += k_folds[k]
     
-    print(f"Training set:\n\n\n{training_set}")
-    return
+    #print(f"Training set:\n\n\n{training_set}")
+    #return
 
     accuracy, precision, recall, f1 = neural_net.main(0, [64,10,10,10], np.array(training_set), np.array(test_set), 'optdigits')
     print(f'{accuracy=}')
