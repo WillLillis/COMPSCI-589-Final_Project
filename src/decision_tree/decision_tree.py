@@ -56,7 +56,7 @@ class decision_tree:
             else:
                 self.is_leaf = False
         elif stopping_criteria == "minimal_gain_criterion":
-             thresh = 0.1 # arbitary threshold
+             thresh = 0.001 # arbitary threshold
              info_gains = {} # information gain for each attribute
              data_set_only_labels = [] # strip off just the class labels (0's and 1's) to calculate entropy/ info gain
              for index in range(len(data)):
@@ -123,7 +123,7 @@ class decision_tree:
                     return
                 else:
                     self.is_leaf = False
-                    self.node_attr = split_attr                
+                    self.node_attr = split_attr              
         elif split_metric == "Gini":
             ginis = {}
             data_set_only_labels = []
