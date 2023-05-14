@@ -226,9 +226,11 @@ class decision_tree:
 # if labels_only=False-> returns the partitions with entire rows from data set copied in
     # in this case, each partition gets a row of attribute labels at the top
 # pass in attr to index dict?
-def partition_data_categorical(data, attr, attr_vals: dict, attr_labels: list, labels_only=True)->list: 
+def partition_data_categorical(data, attr, attr_vals: dict, attr_labels: list, labels_only=True)->list:
     partitions = [] # creating multi-dimensional arrays in python is weird...
-    for _ in range(len(attr_vals[attr])):
+    #for _ in range(len(attr_vals[attr])):
+    #    partitions.append([])
+    for _ in range(max(len(attr_vals[attr]) + 1, max(attr_vals[attr]) + 1)):
         partitions.append([])
 
     for i in range(len(attr_labels) - 1):
@@ -238,8 +240,13 @@ def partition_data_categorical(data, attr, attr_vals: dict, attr_labels: list, l
     # going to abuse the fact that the categorical attribute values are 0,1,2,... and use them as indices in the partitions list
         # using value of attribute for index into partition list (array?)
     # if they weren't I could just use a dict to map the value to an index, but that looks messy....
+    #print(f"{partitions=}")
     if labels_only == True:
          for i in range(len(data)):
+            #print(f"{attr_vals=}, {attr_vals[attr_index]=}")
+
+            #print(f"{i=}, {attr_index=}")
+            #print(f"{data[i][attr_index]}")
             partitions[data[i][attr_index]].append(deepcopy(data[i][-1]))
     else:
         for i in range(len(data)):

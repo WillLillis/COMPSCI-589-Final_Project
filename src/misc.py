@@ -173,7 +173,9 @@ def k_folds_gen(k: int, file_name: str, normalize_attrs: bool):
             # cast attribute values to appropriate data types from strings
             for i in range(1, len(data_set)):
                 for j in range(len(data_set[0])):
-                    if j == 1: # translate 'male'/'female' to '0'/'1'
+                    if j == 0: 
+                        data_set[i][j] = int(data_set[i][j]) - 1
+                    elif j == 1: # translate 'male'/'female' to '0'/'1'
                         data_set[i][j] = 0 if data_set[i][j] == 'male' else 1
                     elif j == 2 or j == 5: # age and fare both floats
                         data_set[i][j] = float(data_set[i][j])
