@@ -25,6 +25,9 @@ def get_metrics(labels: list, preds: list, num_classes: int):
     false_pos = np.sum(conf_matrix, axis=0) - true_pos
     false_neg = np.sum(conf_matrix, axis=1) - true_pos
 
+    print(f'{true_pos=}')
+    print(f'{false_pos=}')
+    print(f'{true_pos / (true_pos + false_pos)=}')
     precision = np.mean(true_pos / (true_pos + false_pos))
     recall = np.mean(true_pos / (true_pos + false_neg))
     f1_score = 2 * (precision * recall) / (precision + recall)
