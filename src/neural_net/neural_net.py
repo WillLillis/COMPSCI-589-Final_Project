@@ -6,8 +6,9 @@ from math import sqrt, log2, floor
 import numpy as np
 import os
 from statistics import stdev
+import misc
 
-def main(regularization: float, net_shape: list, training_set, testing_set, file_name: str):
+def main(regularization: float, net_shape: list, training_set, testing_set, num_classes: int):
     weights = set_weights(net_shape)
     # for regularized cost
     # split = int(len(data_set) * .7)
@@ -36,7 +37,17 @@ def main(regularization: float, net_shape: list, training_set, testing_set, file
 
     training_set = training_set[:, :-1]
     testing_set = testing_set[:, :-1]
-    final_weights = back_propogate(weights, training_set, expected_outputs, net_shape, regularization)
+    final_weights = back_propogate(weights, training_set, expected_outputs, net_shape, regularization, 500)
+    
+    preds = []
+    labels = []
+    for i in range(len(testing_set)):
+        output, _ = forward_propogate(final_weights, testing_set[i])
+        preds.append(np.argmax(output))
+        labels.append(np.argmax(expected_outputs[i]))
+
+    return misc.get_metrics(labels, preds, num_classes)
+
     accuracy, precision, recall = test(final_weights, testing_set, expected_test_outputs, regularization, file_name)
 
     if precision == 0 and recall == 0:
@@ -240,7 +251,7 @@ def regularize(weights, inputs, regularization):
     regularized = (regularization / (2 * len(inputs))) * square_weights
     return regularized
 
-def back_propogate(weights, inputs, expected_outputs, net_shape, regularization, benchmark=False):
+def back_propogate(weights, inputs, expected_outputs, net_shape, regularization, num_loops: int, benchmark=False):
     # initialize big ol D
     weights_copy = deepcopy(weights)
     gradients = []
@@ -250,7 +261,7 @@ def back_propogate(weights, inputs, expected_outputs, net_shape, regularization,
     if benchmark:
         loops = 1
     else:
-        loops = 500
+        loops = num_loops
     for _ in range(loops):
         for k in range(len(inputs)):
             if benchmark:

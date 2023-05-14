@@ -11,6 +11,27 @@ import random
 import sys
 import os
 
+
+# returns accuracy, precision, recall, and f1 score
+def get_metrics(labels: list, preds: list, num_classes: int):
+    conf_matrix = np.zeros((num_classes, num_classes), dtype=int)
+
+    for i in range(len(preds)):
+        conf_matrix[labels[i]][preds[i]] += 1
+
+    #print(f"{conf_matrix=}")
+    # https://stackoverflow.com/questions/40729875/calculate-precision-and-recall-in-a-confusion-matrix
+    accuracy = np.trace(conf_matrix) / np.sum(conf_matrix)
+    true_pos = np.diag(conf_matrix)
+    false_pos = np.sum(conf_matrix, axis=0) - true_pos
+    false_neg = np.sum(conf_matrix, axis=1) - true_pos
+
+    precision = np.mean(true_pos / (true_pos + false_pos))
+    recall = np.mean(true_pos / (true_pos + false_neg))
+    f1_score = 2 * (precision * recall) / (precision + recall)
+
+    return accuracy, precision, recall, f1_score
+
 # returns a bootstrap of the data set passed in, with labels still in the first row
 def bootstrap(data: list):
     length = len(data)
@@ -196,7 +217,7 @@ def k_folds_gen(k: int, file_name: str, normalize_attrs: bool):
                         #    tmp_min = min(tmp_min, data_set[j][i])
                         #for j in range(len(data_set)): # Scale all the values according to this max value
                         #    data_set[j][i] = (data_set[j][i] - tmp_min) / (tmp_max - tmp_min)
-            print(f"Dataset:\n\n\n{data_set}")
+            #print(f"Dataset:\n\n\n{data_set}")
         else:
             print(f"Bad file name passed as parameter! ({file_name})")
             return None

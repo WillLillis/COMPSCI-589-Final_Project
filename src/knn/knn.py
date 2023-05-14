@@ -7,6 +7,7 @@ import sys
 import os
 import numpy as np
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
+import misc
 
 # read in the data from the csv, normalize it, randomly split into training and test sets, return these sets
 def prepare_data():
@@ -94,18 +95,22 @@ def knn_classify(neighbors, instance, k, distance_func=euclidean_dist):
 
     return max(votes, key = votes.get)
  
-def knn_test(neighbors: list, test_instances: list, k: int, distance_func=euclidean_dist):
-    true_labels = test_instances[:-1]
+def knn_test(neighbors: list, test_instances: list, k: int, num_classes: int, distance_func=euclidean_dist):
+    #true_labels = test_instances[:-1] # this doesn't work
+    true_labels = []
     pred_labels = []
 
-    for entry in test_instances:
-        pred_labels.append(knn_classify(neighbors, k))
-    
-    # hard coding 10 for testing purposes, will generalize later
-    conf_matrix = np.zeros((10, 10), dtype=int)
+    for instance in test_instances:
+        true_labels.append(instance[-1])
 
-    for i in range(len(true_labels)):
-        conf_matrix[true_labels[i]][pred_labels[i]] += 1
+    # TODO: add optimizations in here-> write second version of knn_classify that takes in list of entries, avoid redundant work
+    for entry in test_instances:
+        pred_labels.append(knn_classify(neighbors, entry, k, distance_func=distance_func))
+    
+    #for index in range(len(true_labels)):
+    #    print(f"{index}: {true_labels[index]}, {pred_labels[index]}")
+    
+    return misc.get_metrics(true_labels, pred_labels, num_classes)
 
 
 #def main():
