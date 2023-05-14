@@ -60,8 +60,27 @@ class random_forest:
         else:
             self.trees[tree_index].recursive_print()
 
-#def main():
-#    print("Hey")
+    def test_forest(self, test_instances, attr_type, num_classes):
+        true_labels = []
+        pred_labels = []
+
+        for instance in test_instances:
+            true_labels.append(instance[-1])
+
+        # TODO: add optimizations in here-> write second version of knn_classify that takes in list of entries, avoid redundant work
+        for entry in test_instances:
+            pred_labels.append(self.classify_instance(entry, attr_type))
+        
+        #for index in range(len(true_labels)):
+        #    print(f"{index}: {true_labels[index]}, {pred_labels[index]}")
+        
+        return misc.get_metrics(true_labels, pred_labels, num_classes)
+
+def main(training_set, test_set, num_trees, attr_type, data_labels_num, num_classes):
+   forest = random_forest(training_set, num_trees, attr_type, data_labels_num)
+
+   return forest.test_forest(test_set, attr_type, num_classes)
+
 
 #if __name__ == "__main__":
 #    main()

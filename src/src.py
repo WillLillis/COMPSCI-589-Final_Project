@@ -10,7 +10,7 @@ from random_forest import random_forest
 from neural_net import neural_net
 from knn import knn
 
-def test_digits(num_folds: int) -> None:
+def test_digits(num_folds: int, num_trees: int) -> None:
     k_folds, attr_type, attr_labels = misc.k_folds_gen(num_folds, os.path.join("The_Hand-Written_Digits_Recognition_Dataset", "optdigits.comb"), True)
     
     # TODO: tune hyper-parameters, add random forest code
@@ -55,7 +55,20 @@ def test_digits(num_folds: int) -> None:
         nn_recalls.append(recall)
         nn_f1_scores.append(f1_score)
 
-        #print(f"\tTesting RF:")
+        print(f"\tTesting RF:")
+        # slap the labels back onto the top of the k_folds list of lists
+        # TODO: ideally get rid of this
+        training_set.insert(0, attr_labels)
+        data_labels_num = deepcopy(attr_labels)
+        for i in range(len(data_labels_num) - 1):
+            data_labels_num[i] = i
+        accuracy, precision, recall, f1_score = random_forest.main(training_set, test_set, num_trees, attr_type, data_labels_num, 10)
+        # print(f"RF: {accuracy=}, {precision=}, {recall=}, {f1_score=}")
+        rf_accuracies.append(accuracy)
+        rf_precisions.append(precision)
+        rf_recalls.append(recall)
+        rf_f1_scores.append(f1_score)
+
     print("MNIST Results:")
     print(f"\tKNN: Accuracy: {sum(knn_accuracies) / num_folds}")
     print(f"\tKNN: Precision: {sum(knn_precisions) / num_folds}")
@@ -66,6 +79,11 @@ def test_digits(num_folds: int) -> None:
     print(f"\tNN: Precision: {sum(nn_precisions) / num_folds}")
     print(f"\tNN: Recall: {sum(nn_recalls) / num_folds}")
     print(f"\tNN: F1-Score: {sum(nn_f1_scores) / num_folds}")
+    print(f"\n")
+    print(f"\tRF: Accuracy: {sum(rf_accuracies) / num_folds}")
+    print(f"\tRF: Precision: {sum(rf_precisions) / num_folds}")
+    print(f"\tRF: Recall: {sum(rf_recalls) / num_folds}")
+    print(f"\tRF: F1-Score: {sum(rf_f1_scores) / num_folds}")
 
 
 
@@ -73,7 +91,7 @@ def test_digits(num_folds: int) -> None:
     # originally an 8x8 grayscale pixel array, which was flattened
     # I guess values 0->15 indicate white->black for each pixel
     # going to wait to write code to load this until we see how our NN turns out
-def test_loans(num_folds: int)-> None:
+def test_loans(num_folds: int, num_trees: int)-> None:
     k_folds, attr_type, attr_labels = misc.k_folds_gen(num_folds, os.path.join("The_Loan_Eligibility_Prediction_Dataset", "loan.csv"), True)
 
     # TODO: tune hyper-parameters, add random forest code
@@ -117,8 +135,21 @@ def test_loans(num_folds: int)-> None:
         nn_precisions.append(precision)
         nn_recalls.append(recall)
         nn_f1_scores.append(f1_score)
+        
+        print(f"\tTesting RF:")
+        # slap the labels back onto the top of the k_folds list of lists
+        # TODO: ideally get rid of this
+        training_set.insert(0, attr_labels)
+        data_labels_num = deepcopy(attr_labels)
+        for i in range(len(data_labels_num) - 1):
+            data_labels_num[i] = i
+        accuracy, precision, recall, f1_score = random_forest.main(training_set, test_set, num_trees, attr_type, data_labels_num, 2)
+        # print(f"RF: {accuracy=}, {precision=}, {recall=}, {f1_score=}")
+        rf_accuracies.append(accuracy)
+        rf_precisions.append(precision)
+        rf_recalls.append(recall)
+        rf_f1_scores.append(f1_score)
 
-        #print(f"\tTesting RF:")
     print("Loan Eligibility Results:")
     print(f"\tKNN: Accuracy: {sum(knn_accuracies) / num_folds}")
     print(f"\tKNN: Precision: {sum(knn_precisions) / num_folds}")
@@ -129,10 +160,14 @@ def test_loans(num_folds: int)-> None:
     print(f"\tNN: Precision: {sum(nn_precisions) / num_folds}")
     print(f"\tNN: Recall: {sum(nn_recalls) / num_folds}")
     print(f"\tNN: F1-Score: {sum(nn_f1_scores) / num_folds}")
+    print(f"\n")
+    print(f"\tRF: Accuracy: {sum(rf_accuracies) / num_folds}")
+    print(f"\tRF: Precision: {sum(rf_precisions) / num_folds}")
+    print(f"\tRF: Recall: {sum(rf_recalls) / num_folds}")
+    print(f"\tRF: F1-Score: {sum(rf_f1_scores) / num_folds}")
 
 
-
-def test_parkinsons(num_folds: int)-> None:
+def test_parkinsons(num_folds: int, num_trees: int)-> None:
     k_folds, attr_type, attr_labels = misc.k_folds_gen(num_folds, os.path.join("The_Oxford_Parkinson's_Disease_Detection_Dataset", "parkinsons.csv"), True)
 
     num_neighbors = 5 # arbitrary, need to tune!
@@ -176,7 +211,20 @@ def test_parkinsons(num_folds: int)-> None:
         nn_recalls.append(recall)
         nn_f1_scores.append(f1_score)
 
-        #print(f"\tTesting RF:")
+        print(f"\tTesting RF:")
+        # slap the labels back onto the top of the k_folds list of lists
+        # TODO: ideally get rid of this
+        training_set.insert(0, attr_labels)
+        data_labels_num = deepcopy(attr_labels)
+        for i in range(len(data_labels_num) - 1):
+            data_labels_num[i] = i
+        accuracy, precision, recall, f1_score = random_forest.main(training_set, test_set, num_trees, attr_type, data_labels_num, 2)
+        # print(f"RF: {accuracy=}, {precision=}, {recall=}, {f1_score=}")
+        rf_accuracies.append(accuracy)
+        rf_precisions.append(precision)
+        rf_recalls.append(recall)
+        rf_f1_scores.append(f1_score)
+
     print("Parkinson's Results:")
     print(f"\tKNN: Accuracy: {sum(knn_accuracies) / num_folds}")
     print(f"\tKNN: Precision: {sum(knn_precisions) / num_folds}")
@@ -187,9 +235,14 @@ def test_parkinsons(num_folds: int)-> None:
     print(f"\tNN: Precision: {sum(nn_precisions) / num_folds}")
     print(f"\tNN: Recall: {sum(nn_recalls) / num_folds}")
     print(f"\tNN: F1-Score: {sum(nn_f1_scores) / num_folds}")
+    print(f"\n")
+    print(f"\tRF: Accuracy: {sum(rf_accuracies) / num_folds}")
+    print(f"\tRF: Precision: {sum(rf_precisions) / num_folds}")
+    print(f"\tRF: Recall: {sum(rf_recalls) / num_folds}")
+    print(f"\tRF: F1-Score: {sum(rf_f1_scores) / num_folds}")
     
 
-def test_titanic(num_folds: int)-> None:
+def test_titanic(num_folds: int, num_trees: int)-> None:
     k_folds, attr_type, attr_labels = misc.k_folds_gen(num_folds, os.path.join("The_Titanic_Dataset", "titanic.csv"), True)
 
     num_neighbors = 5 # arbitrary, need to tune!
@@ -233,7 +286,20 @@ def test_titanic(num_folds: int)-> None:
         nn_recalls.append(recall)
         nn_f1_scores.append(f1_score)
 
-        #print(f"\tTesting RF:")
+        print(f"\tTesting RF:")
+        # slap the labels back onto the top of the k_folds list of lists
+        # TODO: ideally get rid of this
+        training_set.insert(0, attr_labels)
+        data_labels_num = deepcopy(attr_labels)
+        for i in range(len(data_labels_num) - 1):
+            data_labels_num[i] = i
+        accuracy, precision, recall, f1_score = random_forest.main(training_set, test_set, num_trees, attr_type, data_labels_num, 2)
+        # print(f"RF: {accuracy=}, {precision=}, {recall=}, {f1_score=}")
+        rf_accuracies.append(accuracy)
+        rf_precisions.append(precision)
+        rf_recalls.append(recall)
+        rf_f1_scores.append(f1_score)
+
     print("Titanic Results:")
     print(f"\tKNN: Accuracy: {sum(knn_accuracies) / num_folds}")
     print(f"\tKNN: Precision: {sum(knn_precisions) / num_folds}")
@@ -244,7 +310,11 @@ def test_titanic(num_folds: int)-> None:
     print(f"\tNN: Precision: {sum(nn_precisions) / num_folds}")
     print(f"\tNN: Recall: {sum(nn_recalls) / num_folds}")
     print(f"\tNN: F1-Score: {sum(nn_f1_scores) / num_folds}")
-
+    print(f"\n")
+    print(f"\tRF: Accuracy: {sum(rf_accuracies) / num_folds}")
+    print(f"\tRF: Precision: {sum(rf_precisions) / num_folds}")
+    print(f"\tRF: Recall: {sum(rf_recalls) / num_folds}")
+    print(f"\tRF: F1-Score: {sum(rf_f1_scores) / num_folds}")
 
 
 def test_wine(num_trees: int, num_folds: int) -> None:
@@ -459,10 +529,10 @@ def test_congress(num_trees: int, num_folds: int)-> None:
     print(f"\tAvg F1 Score: {sum(F1s) / len(F1s)}")
 
 def main():
-    #test_loans(10, 10)
-    #test_titanic(10, 10)
-    # test_parkinsons(10)
-    test_digits(5)
+    test_loans(5, 10)
+    test_titanic(5, 10)
+    test_parkinsons(5, 10)
+    test_digits(5, 10)
     # test_wine(10, 10)
     # test_congress(10, 10)
 
