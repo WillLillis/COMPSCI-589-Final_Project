@@ -11,7 +11,6 @@ import random
 import sys
 import os
 
-
 # returns accuracy, precision, recall, and f1 score
 def get_metrics(labels: list, preds: list, num_classes: int):
     conf_matrix = np.zeros((num_classes, num_classes), dtype=int)
@@ -194,7 +193,6 @@ def k_folds_gen(k: int, file_name: str, normalize_attrs: bool):
                             tmp_max = max(tmp_max, data_set[j][i])
                         for j in range(1, len(data_set)): # Scale all the values according to this max value
                             data_set[j][i] /= tmp_max
-        # TODO: separate test and training files :(
         elif 'optdigits' in file_name:
             data_reader = csv.reader(raw_data_file)
             data_set = list(data_reader)

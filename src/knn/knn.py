@@ -78,7 +78,29 @@ def euclidean_dist(x_1, x_2):
         accum += (x_1[i] - x_2[i])**2
     return accum**0.5
 
-def knn_classify(neighbors, instance, k, distance_func=euclidean_dist):
+# A mess
+#def knn_classify_batch(neighbors: list, instances: list, k: int, distance_func=euclidean_dist):
+#    neighbors_local = deepcopy(neighbors) # make a copy of neighbors so we don't mess with the original list's contents
+    
+#    neighbors_local.sort(key=lambda x: x[-1]) # sort neighbors according to the last entry (euclidean distance that was just appended on)
+    
+#    preds = []
+#    for instance in instances:
+#        for i in range(len(neighbors_local)):
+#            neighbors_local[i].append(distance_func(neighbors_local[i][:len(instance) - 1], instance[:len(instance) - 1]))
+#        votes = {} # dict to track the nearest neighbor's votes
+#        for i in range(k):
+#            if neighbors_local[i][-2] in votes: # if there's already been a vote for this class...
+#                votes[neighbors_local[i][-2]] += 1 # ...increment the count
+#            else:
+#                votes[neighbors_local[i][-2]] = 1 # ...otherwise add it to the dict
+#        preds.append(max(votes, key = votes.get))
+#        for i in range(len(neighbors_local)):
+#            neighbors_local[i].pop(-1)
+
+#    return preds
+
+def knn_classify(neighbors: int, instance, k:int, distance_func=euclidean_dist):
     neighbors_local = deepcopy(neighbors) # make a copy of neighbors so we don't mess with the original list's contents
     
     for i in range(len(neighbors_local)):
@@ -103,7 +125,6 @@ def knn_test(neighbors: list, test_instances: list, k: int, num_classes: int, di
     for instance in test_instances:
         true_labels.append(instance[-1])
 
-    # TODO: add optimizations in here-> write second version of knn_classify that takes in list of entries, avoid redundant work
     for entry in test_instances:
         pred_labels.append(knn_classify(neighbors, entry, k, distance_func=distance_func))
     

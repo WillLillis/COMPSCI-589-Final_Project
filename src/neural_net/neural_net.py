@@ -48,16 +48,6 @@ def main(regularization: float, net_shape: list, training_set, testing_set, num_
 
     return misc.get_metrics(labels, preds, num_classes)
 
-    accuracy, precision, recall = test(final_weights, testing_set, expected_test_outputs, regularization, file_name)
-
-    if precision == 0 and recall == 0:
-        f1 = 0
-    else:
-        f1 = (2 * precision * recall)/(precision + recall)
-
-    return accuracy, precision, recall, f1
-
-
 def normalize(data_set):
     for column in range(len(data_set[0])):
         a_max = float('-inf')
