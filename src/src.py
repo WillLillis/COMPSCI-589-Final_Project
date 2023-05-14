@@ -120,21 +120,21 @@ def test_loans(num_folds: int, num_trees: int)-> None:
                 training_set += k_folds[i]
         
         print(f"{k=}:")
-        print(f"\tTesting KNN:")
-        accuracy, precision, recall, f1_score = knn.knn_test(training_set, test_set, num_neighbors, 2)
-        #print(f"KNN: {accuracy=}, {precision=}, {recall=}, {f1_score=}")
-        knn_accuracies.append(accuracy)
-        knn_precisions.append(precision)
-        knn_recalls.append(recall)
-        knn_f1_scores.append(f1_score)
+        # print(f"\tTesting KNN:")
+        # accuracy, precision, recall, f1_score = knn.knn_test(training_set, test_set, num_neighbors, 2)
+        # #print(f"KNN: {accuracy=}, {precision=}, {recall=}, {f1_score=}")
+        # knn_accuracies.append(accuracy)
+        # knn_precisions.append(precision)
+        # knn_recalls.append(recall)
+        # knn_f1_scores.append(f1_score)
 
-        print(f"\tTesting NN:")
-        accuracy, precision, recall, f1_score = neural_net.main(0, [11,10,10,10], np.array(training_set), np.array(test_set), 2)
-        #print(f"NN: {accuracy=}, {precision=}, {recall=}, {f1_score=}")
-        nn_accuracies.append(accuracy)
-        nn_precisions.append(precision)
-        nn_recalls.append(recall)
-        nn_f1_scores.append(f1_score)
+        # print(f"\tTesting NN:")
+        # accuracy, precision, recall, f1_score = neural_net.main(0, [11,10,10,10], np.array(training_set), np.array(test_set), 2)
+        # #print(f"NN: {accuracy=}, {precision=}, {recall=}, {f1_score=}")
+        # nn_accuracies.append(accuracy)
+        # nn_precisions.append(precision)
+        # nn_recalls.append(recall)
+        # nn_f1_scores.append(f1_score)
         
         print(f"\tTesting RF:")
         # slap the labels back onto the top of the k_folds list of lists
@@ -530,9 +530,9 @@ def test_congress(num_trees: int, num_folds: int)-> None:
 
 def main():
     test_loans(5, 10)
-    test_titanic(5, 10)
-    test_parkinsons(5, 10)
-    test_digits(5, 10)
+    # test_titanic(5, 10)
+    # test_parkinsons(5, 10)
+    # test_digits(5, 10)
     # test_wine(10, 10)
     # test_congress(10, 10)
 

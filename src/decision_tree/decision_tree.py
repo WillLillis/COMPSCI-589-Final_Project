@@ -65,7 +65,7 @@ class decision_tree:
              # get random subset of dataset's attributes
              attributes = get_rand_cats(deepcopy(attr_labels))
              for i in range(len(attributes)):
-                 if attr_type[i] == True: # if it's a numerical attribute...
+                 if attr_type[attributes[i]] == True: # if it's a numerical attribute...
                      partitions, _ = partition_data_numerical(data, attributes[i], attr_labels) # paritition 'data' according to the current attribute 'attr'
                  else: # otherwise it's categorical
                      partitions = partition_data_categorical(data, attributes[i], attr_vals, attr_labels) # paritition 'data' according to the current attribute 'attr'
@@ -109,7 +109,7 @@ class decision_tree:
                 # get random subset of dataset's attributes
                 attributes = get_rand_cats(deepcopy(attr_labels))
                 for i in range(len(attributes)):
-                    if attr_type[i] == True: # if it's a numerical attribute...
+                    if attr_type[attributes[i]] == True: # if it's a numerical attribute...
                         partitions, _ = partition_data_numerical(data, attributes[i], attr_labels) # paritition 'data' according to the current attribute 'attr'
                     else: # otherwise it's categorical
                         partitions = partition_data_categorical(data, attributes[i], attr_vals, attr_labels) # paritition 'data' according to the current attribute 'attr'
@@ -147,7 +147,7 @@ class decision_tree:
         
         self.node_attr = split_attr
         # partition data based off of split_attr
-        if attr_type[i] == True: # if it's a numerical attribute...
+        if attr_type[split_attr] == True: # if it's a numerical attribute...
             child_data, self.threshold = partition_data_numerical(data, split_attr, attr_labels, labels_only=False) # paritition 'data' according to the current attribute 'attr'
         else: # otherwise it's categorical
             child_data = partition_data_categorical(data, split_attr, attr_vals, attr_labels, labels_only=False) # paritition 'data' according to the current attribute 'attr'
