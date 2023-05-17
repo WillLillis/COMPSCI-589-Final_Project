@@ -40,9 +40,9 @@ def learning_curve_knn(training_set, test_set, num_neighbors, num_classes):
 
     for k in num_k:
         accuracy, _, _, f1_score = knn.knn_test(training_set, test_set, k, num_classes)
-        # print(f'{k=}')
-        print(f'{accuracy}')
-        # print(f'{f1_score}')
+        print(f'{k=}')
+        print(f'{accuracy=}')
+        print(f'{f1_score=}')
 
 def learning_curve_nn(regularization, net_shape, training_set, test_set, num_classes):
     end = 5

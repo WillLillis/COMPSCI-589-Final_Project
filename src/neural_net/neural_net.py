@@ -41,10 +41,18 @@ def main(regularization: float, net_shape: list, training_set, testing_set, num_
     
     preds = []
     labels = []
+    costs = 0
     for i in range(len(testing_set)):
         output, _ = forward_propogate(final_weights, testing_set[i])
         preds.append(np.argmax(output))
         labels.append(np.argmax(expected_test_outputs[i]))
+        cost = cost_fn(expected_test_outputs[i], output)
+        costs += cost
+    
+    costs = costs / len(testing_set)
+    regularized = regularize(weights, testing_set, regularization)
+    regularized_cost = costs + regularized
+    # print(f'{regularized_cost}')
 
     return misc.get_metrics(labels, preds, num_classes)
 
