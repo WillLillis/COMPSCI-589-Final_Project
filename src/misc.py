@@ -10,6 +10,9 @@ import numpy as np
 import random
 import sys
 import os
+from knn import knn
+from neural_net import neural_net
+from random_forest import random_forest
 
 # returns accuracy, precision, recall, and f1 score
 def get_metrics(labels: list, preds: list, num_classes: int):
@@ -30,6 +33,35 @@ def get_metrics(labels: list, preds: list, num_classes: int):
     f1_score = 2 * (precision * recall) / (precision + recall)
 
     return accuracy, precision, recall, f1_score
+
+
+def learning_curve_knn(training_set, test_set, num_neighbors, num_classes):
+    num_k = [num for num in range(1, 51) if num % 5 == 0 or num == 1]
+
+    for k in num_k:
+        accuracy, _, _, f1_score = knn.knn_test(training_set, test_set, k, num_classes)
+        # print(f'{k=}')
+        print(f'{accuracy}')
+        # print(f'{f1_score}')
+
+def learning_curve_nn(regularization, net_shape, training_set, test_set, num_classes):
+    end = 5
+    while end <= len(training_set):
+        temp_train_set = deepcopy(training_set)[:end]
+        end += 5
+        accuracy, _, _, f1_score = neural_net.main(regularization, net_shape, np.array(temp_train_set), np.array(test_set), num_classes)
+        print(f'{end=}')
+        print(f'{accuracy=}')
+        print(f'{f1_score=}')
+
+def learning_curve_rf(training_set, test_set, attr_type, data_labels_num, num_classes):
+    num_trees = [num for num in range(1, 51) if num % 5 == 0 or num == 1]
+
+    for tree in num_trees:
+        accuracy, _, _, f1_score = random_forest.main(training_set, test_set, tree, attr_type, data_labels_num, num_classes)
+        print(f'{tree=}')
+        print(f'{accuracy=}')
+        print(f'{f1_score=}')
 
 # returns a bootstrap of the data set passed in, with labels still in the first row
 def bootstrap(data: list):
