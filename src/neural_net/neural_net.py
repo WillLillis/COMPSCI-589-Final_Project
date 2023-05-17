@@ -44,7 +44,7 @@ def main(regularization: float, net_shape: list, training_set, testing_set, num_
     for i in range(len(testing_set)):
         output, _ = forward_propogate(final_weights, testing_set[i])
         preds.append(np.argmax(output))
-        labels.append(np.argmax(expected_outputs[i]))
+        labels.append(np.argmax(expected_test_outputs[i]))
 
     return misc.get_metrics(labels, preds, num_classes)
 

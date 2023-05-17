@@ -39,13 +39,13 @@ def test_digits(num_folds: int, num_trees: int) -> None:
                 training_set += k_folds[i]
 
         if k == 0:
-            misc.learning_curve_knn(training_set, test_set, num_neighbors, 10)
-            # misc.learning_curve_nn(0, [64,30,10,27,10], training_set, test_set, 10)
+            # misc.learning_curve_knn(training_set, test_set, num_neighbors, 10)
+            misc.learning_curve_nn(0, [64,30,10,27,10], training_set, test_set, 10)
             training_set.insert(0, attr_labels)
             data_labels_num = deepcopy(attr_labels)
             for i in range(len(data_labels_num) - 1):
                 data_labels_num[i] = i
-            misc.learning_curve_rf(training_set, test_set, attr_type, data_labels_num, 10)
+            # misc.learning_curve_rf(training_set, test_set, attr_type, data_labels_num, 10)
         
     #     # print(f"{k=}:")
     #     # print(f"\tTesting KNN:")
@@ -130,12 +130,12 @@ def test_loans(num_folds: int, num_trees: int)-> None:
 
         if k == 0:
             # misc.learning_curve_knn(training_set, test_set, num_neighbors, 2)
-            # misc.learning_curve_nn(0, [11,15,15,15,2], training_set, test_set, 2)
+            misc.learning_curve_nn(0, [11,15,15,15,2], training_set, test_set, 2)
             training_set.insert(0, attr_labels)
             data_labels_num = deepcopy(attr_labels)
             for i in range(len(data_labels_num) - 1):
                 data_labels_num[i] = i
-            misc.learning_curve_rf(training_set, test_set, attr_type, data_labels_num, 2)
+            # misc.learning_curve_rf(training_set, test_set, attr_type, data_labels_num, 2)
         
     #     # print(f"{k=}:")
     #     # print(f"\tTesting KNN:")
@@ -214,12 +214,12 @@ def test_parkinsons(num_folds: int, num_trees: int)-> None:
 
         if k == 0:
             # misc.learning_curve_knn(training_set, test_set, num_neighbors, 2)
-            # misc.learning_curve_nn(0, [22,15,15,15,2], training_set, test_set, 2)
+            misc.learning_curve_nn(0, [22,15,15,15,2], training_set, test_set, 2)
             training_set.insert(0, attr_labels)
             data_labels_num = deepcopy(attr_labels)
             for i in range(len(data_labels_num) - 1):
                 data_labels_num[i] = i
-            misc.learning_curve_rf(training_set, test_set, attr_type, data_labels_num, 2)
+            # misc.learning_curve_rf(training_set, test_set, attr_type, data_labels_num, 2)
         
     #     # print(f"{k=}:")
     #     # print(f"\tTesting KNN:")
@@ -298,12 +298,12 @@ def test_titanic(num_folds: int, num_trees: int)-> None:
 
         if k == 0:
             # misc.learning_curve_knn(training_set, test_set, num_neighbors, 2)
-            # misc.learning_curve_nn(0, [6,11,11,2], training_set, test_set, 2)
+            misc.learning_curve_nn(0, [6,11,11,2], training_set, test_set, 2)
             training_set.insert(0, attr_labels)
             data_labels_num = deepcopy(attr_labels)
             for i in range(len(data_labels_num) - 1):
                 data_labels_num[i] = i
-            misc.learning_curve_rf(training_set, test_set, attr_type, data_labels_num, 2)
+            # misc.learning_curve_rf(training_set, test_set, attr_type, data_labels_num, 2)
 
         
     #     # print(f"{k=}:")
