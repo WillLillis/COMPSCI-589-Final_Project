@@ -38,8 +38,8 @@ def test_digits(num_folds: int, num_trees: int) -> None:
             if i != k:
                 training_set += k_folds[i]
         
-        print(f"{k=}:")
-        print(f"\tTesting KNN:")
+        # print(f"{k=}:")
+        # print(f"\tTesting KNN:")
         accuracy, precision, recall, f1_score = knn.knn_test(training_set, test_set, num_neighbors, 10)
         #print(f"KNN: {accuracy=}, {precision=}, {recall=}, {f1_score=}")
         knn_accuracies.append(accuracy)
@@ -47,15 +47,15 @@ def test_digits(num_folds: int, num_trees: int) -> None:
         knn_recalls.append(recall)
         knn_f1_scores.append(f1_score)
 
-        print(f"\tTesting NN:")
-        accuracy, precision, recall, f1_score = neural_net.main(0, [64,10,10,10], np.array(training_set), np.array(test_set), 10)
+        # print(f"\tTesting NN:")
+        accuracy, precision, recall, f1_score = neural_net.main(0, [64,30,10,27,10], np.array(training_set), np.array(test_set), 10)
         #print(f"NN: {accuracy=}, {precision=}, {recall=}, {f1_score=}")
         nn_accuracies.append(accuracy)
         nn_precisions.append(precision)
         nn_recalls.append(recall)
         nn_f1_scores.append(f1_score)
 
-        print(f"\tTesting RF:")
+        # print(f"\tTesting RF:")
         # slap the labels back onto the top of the k_folds list of lists
         # TODO: ideally get rid of this
         training_set.insert(0, attr_labels)
@@ -95,7 +95,7 @@ def test_loans(num_folds: int, num_trees: int)-> None:
     k_folds, attr_type, attr_labels = misc.k_folds_gen(num_folds, os.path.join("The_Loan_Eligibility_Prediction_Dataset", "loan.csv"), True)
 
     # TODO: tune hyper-parameters, add random forest code
-    num_neighbors = 5 # arbitrary, need to tune!
+    num_neighbors = 10 # arbitrary, need to tune!
     knn_accuracies = []
     knn_precisions = []
     knn_recalls = []
@@ -119,8 +119,8 @@ def test_loans(num_folds: int, num_trees: int)-> None:
             if i != k:
                 training_set += k_folds[i]
         
-        print(f"{k=}:")
-        print(f"\tTesting KNN:")
+        # print(f"{k=}:")
+        # print(f"\tTesting KNN:")
         accuracy, precision, recall, f1_score = knn.knn_test(training_set, test_set, num_neighbors, 2)
         #print(f"KNN: {accuracy=}, {precision=}, {recall=}, {f1_score=}")
         knn_accuracies.append(accuracy)
@@ -128,15 +128,15 @@ def test_loans(num_folds: int, num_trees: int)-> None:
         knn_recalls.append(recall)
         knn_f1_scores.append(f1_score)
 
-        print(f"\tTesting NN:")
-        accuracy, precision, recall, f1_score = neural_net.main(0, [11,10,10,10], np.array(training_set), np.array(test_set), 2)
+        # print(f"\tTesting NN:")
+        accuracy, precision, recall, f1_score = neural_net.main(0, [11,15,15,15,2], np.array(training_set), np.array(test_set), 2)
         #print(f"NN: {accuracy=}, {precision=}, {recall=}, {f1_score=}")
         nn_accuracies.append(accuracy)
         nn_precisions.append(precision)
         nn_recalls.append(recall)
         nn_f1_scores.append(f1_score)
         
-        print(f"\tTesting RF:")
+        # print(f"\tTesting RF:")
         # slap the labels back onto the top of the k_folds list of lists
         # TODO: ideally get rid of this
         training_set.insert(0, attr_labels)
@@ -170,7 +170,7 @@ def test_loans(num_folds: int, num_trees: int)-> None:
 def test_parkinsons(num_folds: int, num_trees: int)-> None:
     k_folds, attr_type, attr_labels = misc.k_folds_gen(num_folds, os.path.join("The_Oxford_Parkinson's_Disease_Detection_Dataset", "parkinsons.csv"), True)
 
-    num_neighbors = 5 # arbitrary, need to tune!
+    num_neighbors = 15 # arbitrary, need to tune!
     knn_accuracies = []
     knn_precisions = []
     knn_recalls = []
@@ -194,8 +194,8 @@ def test_parkinsons(num_folds: int, num_trees: int)-> None:
             if i != k:
                 training_set += k_folds[i]
         
-        print(f"{k=}:")
-        print(f"\tTesting KNN:")
+        # print(f"{k=}:")
+        # print(f"\tTesting KNN:")
         accuracy, precision, recall, f1_score = knn.knn_test(training_set, test_set, num_neighbors, 2)
         #print(f"KNN: {accuracy=}, {precision=}, {recall=}, {f1_score=}")
         knn_accuracies.append(accuracy)
@@ -203,15 +203,15 @@ def test_parkinsons(num_folds: int, num_trees: int)-> None:
         knn_recalls.append(recall)
         knn_f1_scores.append(f1_score)
 
-        print(f"\tTesting NN:")
-        accuracy, precision, recall, f1_score = neural_net.main(0, [22,10,10,10], np.array(training_set), np.array(test_set), 2)
+        # print(f"\tTesting NN:")
+        accuracy, precision, recall, f1_score = neural_net.main(0, [22,15,15,15,2], np.array(training_set), np.array(test_set), 2)
         #print(f"NN: {accuracy=}, {precision=}, {recall=}, {f1_score=}")
         nn_accuracies.append(accuracy)
         nn_precisions.append(precision)
         nn_recalls.append(recall)
         nn_f1_scores.append(f1_score)
 
-        print(f"\tTesting RF:")
+        # print(f"\tTesting RF:")
         # slap the labels back onto the top of the k_folds list of lists
         # TODO: ideally get rid of this
         training_set.insert(0, attr_labels)
@@ -245,7 +245,7 @@ def test_parkinsons(num_folds: int, num_trees: int)-> None:
 def test_titanic(num_folds: int, num_trees: int)-> None:
     k_folds, attr_type, attr_labels = misc.k_folds_gen(num_folds, os.path.join("The_Titanic_Dataset", "titanic.csv"), True)
 
-    num_neighbors = 5 # arbitrary, need to tune!
+    num_neighbors = 8 # arbitrary, need to tune!
     knn_accuracies = []
     knn_precisions = []
     knn_recalls = []
@@ -269,8 +269,8 @@ def test_titanic(num_folds: int, num_trees: int)-> None:
             if i != k:
                 training_set += k_folds[i]
         
-        print(f"{k=}:")
-        print(f"\tTesting KNN:")
+        # print(f"{k=}:")
+        # print(f"\tTesting KNN:")
         accuracy, precision, recall, f1_score = knn.knn_test(training_set, test_set, num_neighbors, 2)
         #print(f"KNN: {accuracy=}, {precision=}, {recall=}, {f1_score=}")
         knn_accuracies.append(accuracy)
@@ -278,15 +278,15 @@ def test_titanic(num_folds: int, num_trees: int)-> None:
         knn_recalls.append(recall)
         knn_f1_scores.append(f1_score)
 
-        print(f"\tTesting NN:")
-        accuracy, precision, recall, f1_score = neural_net.main(0, [6,10,10,10], np.array(training_set), np.array(test_set), 2)
+        # print(f"\tTesting NN:")
+        accuracy, precision, recall, f1_score = neural_net.main(0, [6,11,11,2], np.array(training_set), np.array(test_set), 2)
         #print(f"NN: {accuracy=}, {precision=}, {recall=}, {f1_score=}")
         nn_accuracies.append(accuracy)
         nn_precisions.append(precision)
         nn_recalls.append(recall)
         nn_f1_scores.append(f1_score)
 
-        print(f"\tTesting RF:")
+        # print(f"\tTesting RF:")
         # slap the labels back onto the top of the k_folds list of lists
         # TODO: ideally get rid of this
         training_set.insert(0, attr_labels)
@@ -530,10 +530,10 @@ def test_congress(num_trees: int, num_folds: int)-> None:
 
 def main():
     
-    test_loans(5, 10)
-    test_titanic(5, 10)
-    test_parkinsons(5, 10)
-    test_digits(5, 10)
+    test_loans(5, 35)
+    test_titanic(5, 35)
+    test_parkinsons(10, 15)
+    test_digits(5, 35)
     # test_wine(10, 10)
     # test_congress(10, 10)
 

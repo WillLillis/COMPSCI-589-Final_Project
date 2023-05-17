@@ -228,8 +228,6 @@ class decision_tree:
 # pass in attr to index dict?
 def partition_data_categorical(data, attr, attr_vals: dict, attr_labels: list, labels_only=True)->list:
     partitions = [] # creating multi-dimensional arrays in python is weird...
-    #for _ in range(len(attr_vals[attr])):
-    #    partitions.append([])
     for _ in range(max(len(attr_vals[attr]) + 1, max(attr_vals[attr]) + 1)):
         partitions.append([])
 
